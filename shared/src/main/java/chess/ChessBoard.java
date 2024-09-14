@@ -40,9 +40,14 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
-        // define all the pieces and their positions first?
-        // or call set board?
-        // how do i do that with the colors?
+        //empty board
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                board[i][j] = null;
+            }
+        }
+        //pawns, for loop
+
+        }
     }
 }
