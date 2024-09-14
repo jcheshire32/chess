@@ -32,7 +32,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board[position.getRow()][position.getColumn()];
+        return board[position.getRow()-1][position.getColumn()-1];
     }
 
     /**
@@ -41,5 +41,8 @@ public class ChessBoard {
      */
     public void resetBoard() {
         throw new RuntimeException("Not implemented");
+        // define all the pieces and their positions first?
+        // or call set board?
+        // how do i do that with the colors?
     }
 }
