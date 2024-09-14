@@ -54,15 +54,53 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         var validMoves = new ArrayList<ChessMove>();
-        //example:
         if (pieceType == ChessPiece.PieceType.KING) {
-            
+
         } else if (pieceType == ChessPiece.PieceType.QUEEN) {
             
         } else if (pieceType == ChessPiece.PieceType.BISHOP) {
             
-        } else if (pieceType == ChessPiece.PieceType.KNIGHT) {}
+        } else if (pieceType == ChessPiece.PieceType.KNIGHT) {
+
+        } else if (pieceType == ChessPiece.PieceType.ROOK) {
+
+        } else if (pieceType == ChessPiece.PieceType.PAWN) {
+
+        }
         //validMoves.add(new ChessMove(myPosition, new ChessPosition(3,2),null));
         return validMoves;
+    }
+
+    //king
+    //current position increase either number or both numbers by 1
+    private void addKingMoves(ChessBoard board, ChessPosition myPosition) {
+
+    }
+    //queen - this part doesn't worry if it's blocked?
+    //change first number only, or change 2nd number only, or change first and second numbers to the same degree
+    //can just combine rook and bishop
+    private void addQueenMoves(ChessBoard board, ChessPosition myPosition) {
+
+    }
+    //bishop
+    //both numbers MUST change, and to the same degree
+    private void addBishopMoves(ChessBoard board, ChessPosition myPosition) {
+
+    }
+    //knight
+    //both numbers have to change, one number MUST be 1, the other MUST be 2.
+    private void addKnightMoves(ChessBoard board, ChessPosition myPosition) {
+
+    }
+    //rook
+    //change first number OR change second number
+    private void addRookMoves(ChessBoard board, ChessPosition myPosition) {
+
+    }
+    //pawn
+    //idk how to get this one going....
+    //I guess can only increase it's numbers by 1? and checking if it's attacking can be later, not sure about the first move being 2 tho...
+    private void addPawnMoves(ChessBoard board, ChessPosition myPosition) {
+
     }
 }
