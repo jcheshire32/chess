@@ -46,8 +46,6 @@ public class ChessBoard {
                 board[i][j] = null;
             }
         }
-        //pawns, for loop
-
-        }
+        //pawns
     }
 }
