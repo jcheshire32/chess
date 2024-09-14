@@ -54,13 +54,64 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         var validMoves = new ArrayList<ChessMove>();
+        //make helper to check if next move is out of bounds
         if (pieceType == ChessPiece.PieceType.KING) {
+            int[][] all_king_moves = {
+                    {1, -1},{1, 0},{1, 1},{0, -1},{0, 1},{-1, -1}, {-1, 0}, {-1, 1}
+            };
+            for (int [] move : all_king_moves) {
+                int next_row = myPosition.getRow() + move[0];
+                int next_col = myPosition.getColumn() + move[1];
+                ChessPosition next_position = new ChessPosition(next_row, next_col);
+                if (isInBounds(next_row, next_col)) {
+                    //if moving to empty square
+                    if (next_position == null) {
+                        validMoves.add(new ChessMove(myPosition, next_position, null));
+                    }
+                    //if moving to spot with an opponent
+                    else if (next_position == bad guy){
+                        validMoves.add(new ChessMove(myPosition, next_position, null));
+                    }
+                    //those are the only 2 scenarios where it's okay to move
+                    else {
+                        no no bad bad
+                    }
+                }
+                else {
+                    thats out of bounds
+                }
+            }
 
         } else if (pieceType == ChessPiece.PieceType.QUEEN) {
             
         } else if (pieceType == ChessPiece.PieceType.BISHOP) {
             
         } else if (pieceType == ChessPiece.PieceType.KNIGHT) {
+            int[][] all_knight_moves = {
+                    {-2, -1},{-2,1},{-1,-2},{-1,2},{1,-2},{1,2},{2,-1},{2,1}
+            };
+            for (int [] move : all_knight_moves) {
+                int next_row = myPosition.getRow() + move[0];
+                int next_col = myPosition.getColumn() + move[1];
+                ChessPosition next_position = new ChessPosition(next_row, next_col);
+                if (isInBounds(next_row, next_col)) {
+                    //if moving to empty square
+                    if (next_position == null) {
+                        validMoves.add(new ChessMove(myPosition, next_position, null));
+                    }
+                    //if moving to spot with an opponent
+                    else if (next_position == bad guy){
+                        validMoves.add(new ChessMove(myPosition, next_position, null));
+                    }
+                    //those are the only 2 scenarios where it's okay to move
+                    else {
+                        no no bad bad
+                    }
+                }
+                else {
+                    thats out of bounds
+                }
+            }
 
         } else if (pieceType == ChessPiece.PieceType.ROOK) {
 
@@ -74,6 +125,10 @@ public class ChessPiece {
     //king
     //current position increase either number or both numbers by 1
     private void addKingMoves(ChessBoard board, ChessPosition myPosition) {
+        var kingMoves = new ArrayList<>();
+        //all moves without other checks
+        //How do I check for out of bounds and other pieces?
+        //up left
 
     }
     //queen - this part doesn't worry if it's blocked?
@@ -102,5 +157,15 @@ public class ChessPiece {
     //I guess can only increase it's numbers by 1? and checking if it's attacking can be later, not sure about the first move being 2 tho...
     private void addPawnMoves(ChessBoard board, ChessPosition myPosition) {
 
+    }
+
+    //accepts the NEXT position, where the piece is trying to go to
+    private boolean isInBounds(int row, int col){
+        if(row > 0 && row < 9 && col > 0 && col < 9){
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }
