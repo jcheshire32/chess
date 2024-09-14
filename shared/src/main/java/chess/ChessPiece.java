@@ -53,6 +53,16 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return new ArrayList<ChessMove>();
+        var validMoves = new ArrayList<ChessMove>();
+        //example:
+        if (pieceType == ChessPiece.PieceType.KING) {
+            
+        } else if (pieceType == ChessPiece.PieceType.QUEEN) {
+            
+        } else if (pieceType == ChessPiece.PieceType.BISHOP) {
+            
+        } else if (pieceType == ChessPiece.PieceType.KNIGHT) {}
+        //validMoves.add(new ChessMove(myPosition, new ChessPosition(3,2),null));
+        return validMoves;
     }
 }
