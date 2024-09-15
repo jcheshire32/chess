@@ -75,11 +75,21 @@ public class ChessPiece {
                     //those are the only 2 scenarios where it's okay to move
                 }
             }
-
         } else if (pieceType == ChessPiece.PieceType.QUEEN) {
-            
+            straightLine(board, myPosition, 1, 0, validMoves); //up
+            straightLine(board, myPosition, -1, 0, validMoves); //down
+            straightLine(board, myPosition, 0, 1, validMoves); //right
+            straightLine(board, myPosition, 0, -1, validMoves); //left
+            straightLine(board, myPosition, 1, 1, validMoves); //up right
+            straightLine(board, myPosition, 1, -1, validMoves); //up left
+            straightLine(board, myPosition, -1, 1, validMoves); //down right
+            straightLine(board, myPosition, -1, -1, validMoves); //down left
         } else if (pieceType == ChessPiece.PieceType.BISHOP) {
-            
+            //does the way I did it only work for white?
+            straightLine(board, myPosition, 1, 1, validMoves); //up right
+            straightLine(board, myPosition, 1, -1, validMoves); //up left
+            straightLine(board, myPosition, -1, 1, validMoves); //down right
+            straightLine(board, myPosition, -1, -1, validMoves); //down left
         } else if (pieceType == ChessPiece.PieceType.KNIGHT) {
             int[][] all_knight_moves = {
                     {-2, -1},{-2,1},{-1,-2},{-1,2},{1,-2},{1,2},{2,-1},{2,1}
@@ -102,6 +112,10 @@ public class ChessPiece {
             }
 
         } else if (pieceType == ChessPiece.PieceType.ROOK) {
+            straightLine(board, myPosition, 1, 0, validMoves); //up
+            straightLine(board, myPosition, -1, 0, validMoves); //down
+            straightLine(board, myPosition, 0, 1, validMoves); //right
+            straightLine(board, myPosition, 0, -1, validMoves); //left
 
         } else if (pieceType == ChessPiece.PieceType.PAWN) {
 
@@ -110,28 +124,9 @@ public class ChessPiece {
         return validMoves;
     }
 
-    //queen - this part doesn't worry if it's blocked?
-    //change first number only, or change 2nd number only, or change first and second numbers to the same degree
-    //can just combine rook and bishop
-    private void addQueenMoves(ChessBoard board, ChessPosition myPosition) {
-
-    }
-    //bishop
-    //both numbers MUST change, and to the same degree
-    private void addBishopMoves(ChessBoard board, ChessPosition myPosition) {
-
-    }
-    //rook
-    //change first number OR change second number
-    private void addRookMoves(ChessBoard board, ChessPosition myPosition) {
-
-    }
     //pawn
     //idk how to get this one going....
     //I guess can only increase it's numbers by 1? and checking if it's attacking can be later, not sure about the first move being 2 tho...
-    private void addPawnMoves(ChessBoard board, ChessPosition myPosition) {
-
-    }
 
     //accepts the NEXT position, where the piece is trying to go to
     private boolean isInBounds(int row, int col){
@@ -141,5 +136,25 @@ public class ChessPiece {
         else {
             return false;
         }
+    }
+    //straight line function for rook and bishop
+    //do i need more parameters?
+    private void straightLine(ChessBoard board, ChessPosition myPosition, int row_direction, int col_direction, ArrayList<ChessMove> validMoves) {
+        int nextRow = myPosition.getRow() + row_direction;
+        int nextCol = myPosition.getColumn() + col_direction;
+        //go until out of bounds or any piece
+        //as TA about this function
+        while(isInBounds(nextRow, nextCol)){
+            ChessPosition next_position = new ChessPosition(nextRow, nextCol);
+            if (board.getPiece(next_position) == null) {
+                validMoves.add(new ChessMove(myPosition, next_position, null));
+            }
+            else if (board.getPiece(next_position).getTeamColor() != this.getTeamColor()){
+                validMoves.add(new ChessMove(myPosition, next_position, null));
+            }
+            break;
+        }
+        nextRow += row_direction;
+        nextCol += col_direction;
     }
 }
