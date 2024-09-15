@@ -10,7 +10,6 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    //IJ said to make these both final, I think that's right cause it can't change....
     private final ChessGame.TeamColor pieceColor;
     private final PieceType pieceType;
 
@@ -65,20 +64,15 @@ public class ChessPiece {
                 ChessPosition next_position = new ChessPosition(next_row, next_col);
                 if (isInBounds(next_row, next_col)) {
                     //if moving to empty square
-                    if (next_position == null) {
+                    if (board.getPiece(next_position) == null) {
                         validMoves.add(new ChessMove(myPosition, next_position, null));
                     }
                     //if moving to spot with an opponent
-                    else if (next_position == bad guy){
+                    //if the color of the piece at the next position is not this piece's color
+                    else if (board.getPiece(next_position).getTeamColor() != this.getTeamColor()){
                         validMoves.add(new ChessMove(myPosition, next_position, null));
                     }
                     //those are the only 2 scenarios where it's okay to move
-                    else {
-                        no no bad bad
-                    }
-                }
-                else {
-                    thats out of bounds
                 }
             }
 
@@ -96,20 +90,14 @@ public class ChessPiece {
                 ChessPosition next_position = new ChessPosition(next_row, next_col);
                 if (isInBounds(next_row, next_col)) {
                     //if moving to empty square
-                    if (next_position == null) {
+                    if (board.getPiece(next_position) == null) {
                         validMoves.add(new ChessMove(myPosition, next_position, null));
                     }
                     //if moving to spot with an opponent
-                    else if (next_position == bad guy){
+                    else if (board.getPiece(next_position).getTeamColor() != this.getTeamColor()){
                         validMoves.add(new ChessMove(myPosition, next_position, null));
                     }
                     //those are the only 2 scenarios where it's okay to move
-                    else {
-                        no no bad bad
-                    }
-                }
-                else {
-                    thats out of bounds
                 }
             }
 
@@ -122,15 +110,6 @@ public class ChessPiece {
         return validMoves;
     }
 
-    //king
-    //current position increase either number or both numbers by 1
-    private void addKingMoves(ChessBoard board, ChessPosition myPosition) {
-        var kingMoves = new ArrayList<>();
-        //all moves without other checks
-        //How do I check for out of bounds and other pieces?
-        //up left
-
-    }
     //queen - this part doesn't worry if it's blocked?
     //change first number only, or change 2nd number only, or change first and second numbers to the same degree
     //can just combine rook and bishop
@@ -140,11 +119,6 @@ public class ChessPiece {
     //bishop
     //both numbers MUST change, and to the same degree
     private void addBishopMoves(ChessBoard board, ChessPosition myPosition) {
-
-    }
-    //knight
-    //both numbers have to change, one number MUST be 1, the other MUST be 2.
-    private void addKnightMoves(ChessBoard board, ChessPosition myPosition) {
 
     }
     //rook
