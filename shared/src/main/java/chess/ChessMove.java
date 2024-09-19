@@ -16,9 +16,10 @@ public class ChessMove {
 
     @Override
     public String toString() {
-        return "start:" + start_position +
+        return "ChessMove{" +
+                "start:" + start_position +
                 ", end:" + end_position +
-                ", promotion:" + promotion_piece +
+                ", promotion_piece=" + promotion_piece +
                 '}';
     }
 
