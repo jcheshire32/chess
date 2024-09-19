@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -16,6 +17,19 @@ public class ChessPiece {
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.pieceColor = pieceColor;
         this.pieceType = type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && pieceType == that.pieceType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, pieceType);
     }
 
     /**
@@ -69,6 +83,7 @@ public class ChessPiece {
                     }
                     //if moving to spot with an opponent
                     //if the color of the piece at the next position is not this piece's color
+                    //I think there's a bug in this line?
                     else if (board.getPiece(next_position).getTeamColor() != this.getTeamColor()){
                         validMoves.add(new ChessMove(myPosition, next_position, null));
                     }
@@ -143,7 +158,6 @@ public class ChessPiece {
         int nextRow = myPosition.getRow() + row_direction;
         int nextCol = myPosition.getColumn() + col_direction;
         //go until out of bounds or any piece
-        //as TA about this function
         while(isInBounds(nextRow, nextCol)){
             ChessPosition next_position = new ChessPosition(nextRow, nextCol);
             if (board.getPiece(next_position) == null) {
@@ -152,9 +166,11 @@ public class ChessPiece {
             else if (board.getPiece(next_position).getTeamColor() != this.getTeamColor()){
                 validMoves.add(new ChessMove(myPosition, next_position, null));
             }
-            break;
+            else {
+                break;
+            }
+            nextRow += row_direction;
+            nextCol += col_direction;
         }
-        nextRow += row_direction;
-        nextCol += col_direction;
     }
 }
