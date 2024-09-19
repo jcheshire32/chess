@@ -142,7 +142,6 @@ public class ChessPiece {
 
                 //just moving forward
                 if (board.getPiece(infront_position) == null) {
-                    validMoves.add(new ChessMove(myPosition, infront_position, null));
                     if (myPosition.getRow() == 2 && board.getPiece(infront_two) == null){
                         validMoves.add(new ChessMove(myPosition, infront_two, null));
                     }
@@ -153,30 +152,37 @@ public class ChessPiece {
                         validMoves.add(new ChessMove(myPosition,infront_position,PieceType.KNIGHT));
                         validMoves.add(new ChessMove(myPosition,infront_position,PieceType.ROOK));
                     }
+                    else {
+                        validMoves.add(new ChessMove(myPosition, infront_position, null));
+                    }
                 }
                 // attacking
                 ChessPiece attack_left = board.getPiece(attack_position_left);
                 if (isInBounds(infront, myPosition.getColumn() - 1)) {
                     if (attack_left != null && attack_left.getTeamColor() != this.getTeamColor()){
-                        validMoves.add(new ChessMove(myPosition,attack_position_left,null));
-                    }
-                    if (infront == 8){
-                        validMoves.add(new ChessMove(myPosition,attack_position_left,PieceType.QUEEN));
-                        validMoves.add(new ChessMove(myPosition,attack_position_left,PieceType.BISHOP));
-                        validMoves.add(new ChessMove(myPosition,attack_position_left,PieceType.KNIGHT));
-                        validMoves.add(new ChessMove(myPosition,attack_position_left,PieceType.ROOK));
+                        if (infront == 8){
+                            validMoves.add(new ChessMove(myPosition,attack_position_left,PieceType.QUEEN));
+                            validMoves.add(new ChessMove(myPosition,attack_position_left,PieceType.BISHOP));
+                            validMoves.add(new ChessMove(myPosition,attack_position_left,PieceType.KNIGHT));
+                            validMoves.add(new ChessMove(myPosition,attack_position_left,PieceType.ROOK));
+                        }
+                        else {
+                            validMoves.add(new ChessMove(myPosition,attack_position_left,null));
+                        }
                     }
                 }
                 ChessPiece attack_right = board.getPiece(attack_position_right);
                 if (isInBounds(infront, myPosition.getColumn() + 1)) {
                     if (attack_right != null && attack_right.getTeamColor() != this.getTeamColor()){
-                        validMoves.add(new ChessMove(myPosition,attack_position_right,null));
-                    }
-                    if (infront == 8) {
-                        validMoves.add(new ChessMove(myPosition, attack_position_right, PieceType.QUEEN));
-                        validMoves.add(new ChessMove(myPosition, attack_position_right, PieceType.BISHOP));
-                        validMoves.add(new ChessMove(myPosition, attack_position_right, PieceType.KNIGHT));
-                        validMoves.add(new ChessMove(myPosition, attack_position_right, PieceType.ROOK));
+                        if (infront == 8) {
+                            validMoves.add(new ChessMove(myPosition, attack_position_right, PieceType.QUEEN));
+                            validMoves.add(new ChessMove(myPosition, attack_position_right, PieceType.BISHOP));
+                            validMoves.add(new ChessMove(myPosition, attack_position_right, PieceType.KNIGHT));
+                            validMoves.add(new ChessMove(myPosition, attack_position_right, PieceType.ROOK));
+                        }
+                        else {
+                            validMoves.add(new ChessMove(myPosition,attack_position_right,null));
+                        }
                     }
                 }
             }
@@ -189,7 +195,6 @@ public class ChessPiece {
 
                 //just moving forward
                 if (board.getPiece(infront_position) == null) {
-                    validMoves.add(new ChessMove(myPosition, infront_position, null));
                     if (myPosition.getRow() == 7 && board.getPiece(infront_two) == null){
                         validMoves.add(new ChessMove(myPosition, infront_two, null));
                     }
@@ -200,30 +205,37 @@ public class ChessPiece {
                         validMoves.add(new ChessMove(myPosition,infront_position,PieceType.KNIGHT));
                         validMoves.add(new ChessMove(myPosition,infront_position,PieceType.ROOK));
                     }
+                    else {
+                        validMoves.add(new ChessMove(myPosition, infront_position, null));
+                    }
                 }
                 // attacking
                 ChessPiece attack_left = board.getPiece(attack_position_left);
                 if (isInBounds(infront, myPosition.getColumn() + 1)) {
                     if (attack_left != null && attack_left.getTeamColor() != this.getTeamColor()){
-                        validMoves.add(new ChessMove(myPosition,attack_position_left,null));
-                    }
-                    if (infront == 1){
-                        validMoves.add(new ChessMove(myPosition,attack_position_left,PieceType.QUEEN));
-                        validMoves.add(new ChessMove(myPosition,attack_position_left,PieceType.BISHOP));
-                        validMoves.add(new ChessMove(myPosition,attack_position_left,PieceType.KNIGHT));
-                        validMoves.add(new ChessMove(myPosition,attack_position_left,PieceType.ROOK));
+                        if (infront == 1){
+                            validMoves.add(new ChessMove(myPosition,attack_position_left,PieceType.QUEEN));
+                            validMoves.add(new ChessMove(myPosition,attack_position_left,PieceType.BISHOP));
+                            validMoves.add(new ChessMove(myPosition,attack_position_left,PieceType.KNIGHT));
+                            validMoves.add(new ChessMove(myPosition,attack_position_left,PieceType.ROOK));
+                        }
+                        else {
+                            validMoves.add(new ChessMove(myPosition,attack_position_left,null));
+                        }
                     }
                 }
                 ChessPiece attack_right = board.getPiece(attack_position_right);
                 if (isInBounds(infront, myPosition.getColumn() - 1)) {
                     if (attack_right != null && attack_right.getTeamColor() != this.getTeamColor()){
-                        validMoves.add(new ChessMove(myPosition,attack_position_right,null));
-                    }
-                    if (infront == 1){
-                        validMoves.add(new ChessMove(myPosition,attack_position_right,PieceType.QUEEN));
-                        validMoves.add(new ChessMove(myPosition,attack_position_right,PieceType.BISHOP));
-                        validMoves.add(new ChessMove(myPosition,attack_position_right,PieceType.KNIGHT));
-                        validMoves.add(new ChessMove(myPosition,attack_position_right,PieceType.ROOK));
+                        if (infront == 1){
+                            validMoves.add(new ChessMove(myPosition,attack_position_right,PieceType.QUEEN));
+                            validMoves.add(new ChessMove(myPosition,attack_position_right,PieceType.BISHOP));
+                            validMoves.add(new ChessMove(myPosition,attack_position_right,PieceType.KNIGHT));
+                            validMoves.add(new ChessMove(myPosition,attack_position_right,PieceType.ROOK));
+                        }
+                        else {
+                            validMoves.add(new ChessMove(myPosition,attack_position_right,null));
+                        }
                     }
                 }
             }
