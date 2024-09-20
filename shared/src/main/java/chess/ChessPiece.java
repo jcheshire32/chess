@@ -157,8 +157,8 @@ public class ChessPiece {
                     }
                 }
                 // attacking
-                ChessPiece attack_left = board.getPiece(attack_position_left);
                 if (isInBounds(infront, myPosition.getColumn() - 1)) {
+                    ChessPiece attack_left = board.getPiece(attack_position_left);
                     if (attack_left != null && attack_left.getTeamColor() != this.getTeamColor()){
                         if (infront == 8){
                             validMoves.add(new ChessMove(myPosition,attack_position_left,PieceType.QUEEN));
@@ -171,8 +171,8 @@ public class ChessPiece {
                         }
                     }
                 }
-                ChessPiece attack_right = board.getPiece(attack_position_right);
                 if (isInBounds(infront, myPosition.getColumn() + 1)) {
+                    ChessPiece attack_right = board.getPiece(attack_position_right);
                     if (attack_right != null && attack_right.getTeamColor() != this.getTeamColor()){
                         if (infront == 8) {
                             validMoves.add(new ChessMove(myPosition, attack_position_right, PieceType.QUEEN));
@@ -210,8 +210,8 @@ public class ChessPiece {
                     }
                 }
                 // attacking
-                ChessPiece attack_left = board.getPiece(attack_position_left);
                 if (isInBounds(infront, myPosition.getColumn() + 1)) {
+                    ChessPiece attack_left = board.getPiece(attack_position_left);
                     if (attack_left != null && attack_left.getTeamColor() != this.getTeamColor()){
                         if (infront == 1){
                             validMoves.add(new ChessMove(myPosition,attack_position_left,PieceType.QUEEN));
@@ -224,8 +224,8 @@ public class ChessPiece {
                         }
                     }
                 }
-                ChessPiece attack_right = board.getPiece(attack_position_right);
                 if (isInBounds(infront, myPosition.getColumn() - 1)) {
+                    ChessPiece attack_right = board.getPiece(attack_position_right);
                     if (attack_right != null && attack_right.getTeamColor() != this.getTeamColor()){
                         if (infront == 1){
                             validMoves.add(new ChessMove(myPosition,attack_position_right,PieceType.QUEEN));
@@ -244,15 +244,9 @@ public class ChessPiece {
     }
     //accepts the NEXT position, where the piece is trying to go to
     private boolean isInBounds(int row, int col){
-        if(row > 0 && row < 9 && col > 0 && col < 9){
-            return true;
-        }
-        else {
-            return false;
-        }
+        return row > 0 && row < 9 && col > 0 && col < 9;
     }
     //straight line function for rook and bishop
-    //do i need more parameters?
     private void straightLine(ChessBoard board, ChessPosition myPosition, int row_direction, int col_direction, ArrayList<ChessMove> validMoves) {
         int nextRow = myPosition.getRow() + row_direction;
         int nextCol = myPosition.getColumn() + col_direction;
