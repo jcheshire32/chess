@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -79,11 +80,46 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        //iterate over the board and get all the opponoents pieces
+        //get king position
+        ChessPosition kingPosition;
+        for (int row=1;row<9;row++) {
+            for (int col=1;col<9;col++) {
+                ChessPosition current_position = new ChessPosition(row, col);
+                ChessPiece currentPiece = board.getPiece(current_position);
+                if (currentPiece != null && currentPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                    kingPosition = current_position;
+                    break;
+                }
+            }
+        }
+        //iterate over the board and get all the opponents pieces
+        ArrayList<ChessPiece> bad_pieces = new ArrayList<>();
+        ArrayList<ChessPosition> bad_positions = new ArrayList<>();
+        for (int row=1;row<9;row++) {
+            for (int col=1;col<9;col++) {
+                ChessPosition current_position = new ChessPosition(row, col);
+                ChessPiece currentPiece = board.getPiece(current_position);
+                if (currentPiece != null && currentPiece.getTeamColor() != teamColor) {
+                    bad_pieces.add(currentPiece);
+                    bad_positions.add(current_position);
+                }
+            }
+        }
+        //iterate over all the bad guys pieces moves
+        for (int i=0;i<bad_pieces.size();i++) {
+            ChessPiece bad_guy = bad_pieces.get(i);
+            ChessPosition bad_guy_position = bad_positions.get(i);
 
-        //iteraate over all those pieces moves
+            Collection<ChessMove> bad_moves = bad_guy.pieceMoves(getBoard(), bad_guy_position);
+            //see if in those arrays of moves, if it contains attack my king
+            for (ChessMove move : bad_moves) {
+                if (move.getEndPosition() == kingPosition){
+                    return true;
+                }
+            }
+        }
 
-        //see if in those arrays of moves, if it contains attack my king
+        return false;
     }
 
     /**
@@ -93,13 +129,43 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        ArrayList<ChessPiece> good_pieces = new ArrayList<>();
+        ArrayList<ChessPosition> good_positions = new ArrayList<>();
         //if incheck
-        //iterate over board for MY pieces
-        //iterate over moves for my pieces
-        //see if after executing a move if that takes me out of check
+        if (isInCheck(teamColor)) {
+            //iterate over board for MY pieces
+            for (int row=1;row<9;row++) {
+                for (int col=1;col<9;col++) {
+                    ChessPosition current_position = new ChessPosition(row, col);
+                    ChessPiece currentPiece = board.getPiece(current_position);
+                    if (currentPiece != null && currentPiece.getTeamColor() == teamColor) {
+                        good_pieces.add(currentPiece);
+                        good_positions.add(current_position);
+                    }
+                }
+            }
+            //iterate over moves for my pieces
+            for (int i=0;i<good_pieces.size();i++) {
+                ChessPiece good_guy = good_pieces.get(i);
+                ChessPosition good_guy_position = good_positions.get(i);
+
+                Collection<ChessMove> good_moves = good_guy.pieceMoves(getBoard(), good_guy_position);
+
+                for (ChessMove move : good_moves) {
+                    //See if they can kill the guy attacking me or block him from killing my king
+                    //aka try each move and see if I'm still in check
+                    ChessPiece captured_piece = board.getPiece(move.getEndPosition());
+                    board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
+                    board.addPiece(move.getStartPosition(), null);
+
+                }
+            }
+            //see if after executing a move if that takes me out of check
             //if it does take me out of check return false
             //if it doesn't take me out of check, continue
-        //return true;
+            //return true;
+        }
+        return false;
     }
 
     /**
