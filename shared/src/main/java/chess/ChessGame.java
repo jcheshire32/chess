@@ -81,15 +81,18 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         //get king position
-        ChessPosition kingPosition;
+        ChessPosition kingPosition = null;
         for (int row=1;row<9;row++) {
             for (int col=1;col<9;col++) {
                 ChessPosition current_position = new ChessPosition(row, col);
                 ChessPiece currentPiece = board.getPiece(current_position);
-                if (currentPiece != null && currentPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                if (currentPiece.getPieceType() == ChessPiece.PieceType.KING) {
                     kingPosition = current_position;
                     break;
                 }
+            }
+            if (kingPosition != null) {
+                break;
             }
         }
         //iterate over the board and get all the opponents pieces
@@ -113,7 +116,7 @@ public class ChessGame {
             Collection<ChessMove> bad_moves = bad_guy.pieceMoves(getBoard(), bad_guy_position);
             //see if in those arrays of moves, if it contains attack my king
             for (ChessMove move : bad_moves) {
-                if (move.getEndPosition() == kingPosition){
+                if (move.getEndPosition().equals(kingPosition)){
                     return true;
                 }
             }
@@ -150,20 +153,25 @@ public class ChessGame {
                 ChessPosition good_guy_position = good_positions.get(i);
 
                 Collection<ChessMove> good_moves = good_guy.pieceMoves(getBoard(), good_guy_position);
-
+                //Check if I can kill the guy attacking me or block him from killing my king
                 for (ChessMove move : good_moves) {
-                    //See if they can kill the guy attacking me or block him from killing my king
-                    //aka try each move and see if I'm still in check
+                    //try each move and see if I'm still in check
                     ChessPiece captured_piece = board.getPiece(move.getEndPosition());
                     board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
                     board.addPiece(move.getStartPosition(), null);
+                    //if still in check, undo and go back to the original board
+                    boolean still_in_check = isInCheck(teamColor);
 
+                    board.addPiece(move.getStartPosition(), board.getPiece(move.getStartPosition()));
+                    board.addPiece(move.getEndPosition(), captured_piece);
+                    //if it does take me out of check return false
+                    if(!still_in_check) {
+                        return false;
+                    }
+                    //if it doesn't take me out of check, continue
                 }
             }
-            //see if after executing a move if that takes me out of check
-            //if it does take me out of check return false
-            //if it doesn't take me out of check, continue
-            //return true;
+            return true;
         }
         return false;
     }
@@ -177,9 +185,32 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         // iterate over board for my pieces
+        ArrayList<ChessPiece> good_pieces = new ArrayList<>();
+        ArrayList<ChessPosition> good_positions = new ArrayList<>();
+        for (int row=1;row<9;row++) {
+            for (int col=1;col<9;col++) {
+                ChessPosition current_position = new ChessPosition(row, col);
+                ChessPiece currentPiece = board.getPiece(current_position);
+                if (currentPiece != null && currentPiece.getTeamColor() == teamColor) {
+                    good_pieces.add(currentPiece);
+                    good_positions.add(current_position);
+                }
+            }
+        }
         // iterate over the moves of my pieces
-        // if that list of moves is empty and I'm not in check. Stalemate
-        // if validMoves.length == 0 && isInCheck == false;
+        Collection<ChessMove> good_moves = new ArrayList<>();
+        for (int i=0;i<good_pieces.size();i++) {
+            ChessPiece good_guy = good_pieces.get(i);
+            ChessPosition good_guy_position = good_positions.get(i);
+
+            Collection<ChessMove> good_move = good_guy.pieceMoves(getBoard(), good_guy_position);
+            good_moves.addAll(good_move);
+        }
+        // if that list of moves is empty, and I'm not in check. Stalemate
+        if (good_moves.isEmpty() && isInCheck(teamColor)){
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -200,4 +231,5 @@ public class ChessGame {
         return board;
     }
     //make a function for iterating over all the moves team x can make. parameter is the team. return is validMoves;
+    //add a function for the duplicate code.
 }
