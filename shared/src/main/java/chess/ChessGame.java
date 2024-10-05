@@ -108,7 +108,6 @@ public class ChessGame {
             turn = TeamColor.WHITE;
         }
     }
-
     /**
      * Determines if the given team is in check
      *
