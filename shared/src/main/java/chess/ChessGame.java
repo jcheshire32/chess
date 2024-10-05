@@ -72,7 +72,6 @@ public class ChessGame {
         }
         return null;
     }
-
     /**
      * Makes a move in a chess game
      *
