@@ -7,4 +7,5 @@ public class GameDAO {
     void createGame() throws DataAccessException{}
     findGame(GameData gameID) throws DataAccessException{}
     void joinGame(GameData gamedata?ID?) throws DataAccessException{}
+    void clear();
 }
