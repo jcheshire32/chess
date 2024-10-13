@@ -19,23 +19,13 @@ public class UserService {
     public 	record LoginResult(String username,String authToken){
     }
     public RegisterResult register(RegisterRequest user) throws UnauthorizedException{
-        //They don't have a username or password etc yet tho....
         UserData userData;
-        //get
-        try{
-            userData = MemoryUser.getInstance().getUser(user.username());
-        } catch (DataAccessException e) {
-            throw new UnauthorizedException("User not found");
-        }
-        //idk if I still need this if statement for password
-        if (!userData.password().equals(user.password())) {
-            throw new UnauthorizedException("Wrong password");
-        }
         //create user
         try{
+            userData = new UserData(user.username(), user.password(), user.email());
             MemoryUser.getInstance().createUser(userData);
         } catch (DataAccessException e) {
-            throw new UnauthorizedException("User creation failed");
+            throw new UnauthorizedException("Creation failed");
         }
         //creat auth
         String authToken = UUID.randomUUID().toString();

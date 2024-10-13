@@ -30,7 +30,10 @@ public class MemoryUser implements UserDAO {
 
     @Override
     public void createUser(UserData userData) throws DataAccessException {
-
+        if (users.containsKey(userData.username())){
+            throw new DataAccessException("Username taken");
+        }
+        users.put(userData.username(), userData);
     }
 
     @Override
