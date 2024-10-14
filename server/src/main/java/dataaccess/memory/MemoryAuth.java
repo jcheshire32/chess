@@ -27,12 +27,12 @@ public class MemoryAuth implements AuthDAO {
 
     @Override
     public AuthData getAuth(String authToken) throws DataAccessException {
-        return null;
+        return authDataMap.get(authToken);
     }
 
     @Override
     public void deleteAuth(AuthData authData) throws DataAccessException {
-
+        authDataMap.remove(authData.authToken());
     }
 
     @Override

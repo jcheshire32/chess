@@ -12,11 +12,15 @@ import java.util.UUID;
 public class UserService {
     public 	record RegisterRequest(String username,String password, String email){
     }
-    public 	record RegisterResult(String username,String authToken, String email){
+    public 	record RegisterResult(String username,String authToken){
     }
     public 	record LoginRequest(String username,String password){
     }
     public 	record LoginResult(String username,String authToken){
+    }
+    public record LogoutRequest(AuthData authToken){
+    }
+    public record LogoutResult(){
     }
     public RegisterResult register(RegisterRequest user) throws UnauthorizedException{
         UserData userData;
@@ -35,7 +39,7 @@ public class UserService {
         } catch (DataAccessException e) {
             throw new UnauthorizedException("Authorization failed");
         }
-        return new RegisterResult(user.username(), authToken, user.email());
+        return new RegisterResult(user.username(), authToken);
     }
     public LoginResult login(LoginRequest user) throws UnauthorizedException{
         UserData userData;
@@ -56,5 +60,17 @@ public class UserService {
         }
         return new LoginResult(user.username, authToken);
     }
-    public void logout(AuthData authToken) {}
+    public void logout(String authToken) throws UnauthorizedException{
+        AuthData authData;
+        try{
+            authData = MemoryAuth.getInstance().getAuth(authToken);
+        } catch (DataAccessException e) {
+            throw new UnauthorizedException("Authorization failed");
+        }
+        try {
+            MemoryAuth.getInstance().deleteAuth(authData);
+        } catch (DataAccessException e) {
+            throw new UnauthorizedException("Logout failed");
+        }
+    }
 }
