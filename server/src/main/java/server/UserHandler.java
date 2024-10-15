@@ -38,7 +38,7 @@ public class UserHandler {
         UserService logoutService = new UserService();
         try {
             logoutService.logout(authToken);
-            return "{200}"; //How do I return the json thing?
+            return "{200}"; //How do I return the json thing? Serializer again??
         } catch (UnauthorizedException e) {
             return "[401] { \"message\": \"Error: unauthorized\" }"; //WHAT FAILURE RESPONSE
         }
