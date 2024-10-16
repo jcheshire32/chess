@@ -4,43 +4,59 @@ import com.google.gson.Gson;
 import model.AuthData;
 import service.UnauthorizedException;
 import service.UserService;
+import spark.Request;
+import spark.Response;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 public class UserHandler {
     //register,login,logout
     //return type? Json??
-    public String register(String incomingObject){
+    public Object register(Request req, Response res){
         var serializer = new Gson();
-        var registerRequest = serializer.fromJson(incomingObject, UserService.RegisterRequest.class);
+        var registerRequest = serializer.fromJson(req.body(), UserService.RegisterRequest.class);
         UserService registerService = new UserService();
         try {
             var registerResult = registerService.register(registerRequest);
             return serializer.toJson(registerResult);
         } catch (UnauthorizedException e) {
-            return "[500] { \"message\": \"Error: (description of error)\" }"; //WHICH FAILURE RESPONSE?
+            Map<String, String> temp = new HashMap<>();
+            temp.put("message", e.getMessage());
+            res.status(401);
+            res.body(serializer.toJson(temp));
+            return res.body();
         }
     }
-
-    public String login(String incomingObject){
+    public Object login(Request req, Response res){
         var serializer = new Gson();
-        var loginRequest = serializer.fromJson(incomingObject, UserService.LoginRequest.class);
+        var loginRequest = serializer.fromJson(req.body(), UserService.LoginRequest.class);
         //stuff
         UserService loginService = new UserService();
         try {
             var loginResult = loginService.login(loginRequest);
             return serializer.toJson(loginResult);
         } catch (UnauthorizedException e) {
-            return "[401] { \"message\": \"Error: unauthorized\" }";//WHAT FAILURE RESPONSE
+            Map<String, String> temp = new HashMap<>();
+            temp.put("message", e.getMessage());
+            res.status(401);
+            res.body(serializer.toJson(temp));
+            return res.body();
         }
     }
-    //logout request doesn't receive a json object
-    //THIS FUNCTION
-    public String logout(String authToken){ //Do I return string or is JSON a type to return?
+    public Object logout(Request req, Response res){
+        var serializer = new Gson();
         UserService logoutService = new UserService();
+        String authToken = req.headers("Authorization");
         try {
-            logoutService.logout(authToken);
-            return "{200}"; //How do I return the json thing? Serializer again??
+            return serializer.toJson(logoutService.logout(authToken));
         } catch (UnauthorizedException e) {
-            return "[401] { \"message\": \"Error: unauthorized\" }"; //WHAT FAILURE RESPONSE
+            Map<String, String> temp = new HashMap<>();
+            temp.put("message", e.getMessage());
+            res.status(401);
+            res.body(serializer.toJson(temp));
+            return res.body();
         }
     }
 }

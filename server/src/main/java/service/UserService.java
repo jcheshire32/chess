@@ -60,7 +60,7 @@ public class UserService {
         }
         return new LoginResult(user.username, authToken);
     }
-    public void logout(String authToken) throws UnauthorizedException{
+    public LogoutResult logout(String authToken) throws UnauthorizedException{
         AuthData authData;
         try{
             authData = MemoryAuth.getInstance().getAuth(authToken);
@@ -72,5 +72,6 @@ public class UserService {
         } catch (DataAccessException e) {
             throw new UnauthorizedException("Logout failed");
         }
+        return new LogoutResult();
     }
 }

@@ -7,19 +7,28 @@ import service.GameService;
 import service.UnauthorizedException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import spark.Response;
+import spark.Request;
 
 public class GameHandler {
 
-    public String listGames(String authToken){ //what return type? String of games? LIST of games?
+    public Object listGames(Request req, Response res){
         var serializer = new Gson();
-        List<GameData> games = new ArrayList<>();
         GameService gameService = new GameService();
+        String authToken = req.headers("Authorization");
         try {
             var ListGamesResult = gameService.listGames(authToken);
-            return serializer.toJson(ListGamesResult); //supposed to have all this: [200] { "games": [{"gameID": 1234, "whiteUsername":"", "blackUsername":"", "gameName:""} ]}
+            return serializer.toJson(ListGamesResult);
         } catch (UnauthorizedException e) {
-            return "[401] { \"message\": \"Error: unauthorized\" }";
+            Map<String, String> temp = new HashMap<>();
+            temp.put("message", e.getMessage());
+            res.status(401);
+            res.body(serializer.toJson(temp));
+            return res.body();
         }
     }
 }
