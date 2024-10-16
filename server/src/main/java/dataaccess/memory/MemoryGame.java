@@ -24,8 +24,8 @@ public class MemoryGame implements GameDAO {
     }
 
     @Override
-    public void createGame() throws DataAccessException {
-
+    public void createGame(GameData game) throws DataAccessException {
+        games.add(game);
     }
 
     @Override
