@@ -30,12 +30,12 @@ public class MemoryGame implements GameDAO {
 
     @Override
     public GameData findGame(int gameID) throws DataAccessException { //GET A SPECIFIC GAME
-        return null;
+        return games.get(gameID);
     }
 
     @Override
     public void joinGame(GameData gameData) throws DataAccessException {
-
+        games.add(gameData);
     }
 
     @Override

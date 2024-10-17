@@ -17,6 +17,8 @@ public class GameService {
     public record ListGamesResult(List<GameData> games){}
     public record CreateGameRequest(AuthData authToken){}
     public record CreateGameResult(int gameID){}
+    public record JoinGameRequest(AuthData authToken){}
+    public record JoinGameResult(){}
 
     public ListGamesResult listGames(String authToken) throws UnauthorizedException {
         try {
@@ -38,13 +40,11 @@ public class GameService {
     public CreateGameResult createGame(String authToken, String gameName) throws UnauthorizedException {
         AuthData authData;
         try {
-            authData = MemoryAuth.getInstance().getAuth(authToken);
+            if (MemoryAuth.getInstance().getAuth(authToken) == null){
+                throw new UnauthorizedException("Authorization failed");
+            }
         } catch (DataAccessException e) {
-            throw new UnauthorizedException("Get outta here");
-        }
-        //also if it's null, combine with above? or just delete?
-        if (authData == null) {
-            throw new UnauthorizedException("Invalid auth token");
+            throw new UnauthorizedException("Authorization failed");
         }
         MemoryGame gameStorage = MemoryGame.getInstance();
         int gameID;
@@ -74,5 +74,26 @@ public class GameService {
         }
         return false;
     }
-    public AuthData joinGame(AuthData authToken, GameData colorandIDmaybeidkwhatgoeshere) {return null;}
+    public JoinGameResult joinGame(String authToken, GameData game) throws UnauthorizedException {
+        AuthData authData;
+        try {
+            if (MemoryAuth.getInstance().getAuth(authToken) == null){
+                throw new UnauthorizedException("Authorization failed");
+            }
+        } catch (DataAccessException e) {
+            throw new UnauthorizedException("Authorization failed");
+        }
+        //FIND GAME
+        MemoryGame gameStorage = MemoryGame.getInstance();
+        GameData game2join;
+        try {
+            game2join = gameStorage.findGame(game.gameID()); //from parameter
+            if (game2join == null) {
+                throw new UnauthorizedException("Couldn't find game");
+            }
+        } catch (DataAccessException e) {
+            throw new UnauthorizedException("Couldn't join game");
+        }
+        //JOIN GAME
+    }
 }
