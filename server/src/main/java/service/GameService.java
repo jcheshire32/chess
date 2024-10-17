@@ -16,7 +16,7 @@ public class GameService {
     public record ListGamesRequest(AuthData authToken){}
     public record ListGamesResult(List<GameData> games){}
     public record CreateGameRequest(AuthData authToken){}
-    public record CreateGameResult(GameData game){}
+    public record CreateGameResult(int gameID){}
 
     public ListGamesResult listGames(String authToken) throws UnauthorizedException {
         try {
@@ -35,7 +35,7 @@ public class GameService {
         }
         return new ListGamesResult(games);
     }
-    public int createGame(String authToken, String gameName) throws UnauthorizedException {
+    public CreateGameResult createGame(String authToken, String gameName) throws UnauthorizedException {
         AuthData authData;
         try {
             authData = MemoryAuth.getInstance().getAuth(authToken);
@@ -58,7 +58,7 @@ public class GameService {
         } catch (DataAccessException e) {
             throw new UnauthorizedException("Couldn't create game");
         }
-        return gameID;
+        return new CreateGameResult(gameID);
     }
     boolean isDuplicateGameID(int gameID, MemoryGame gameStorage) throws UnauthorizedException {
         List<GameData> games;
