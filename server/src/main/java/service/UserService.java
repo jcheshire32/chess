@@ -22,14 +22,17 @@ public class UserService {
     }
     public record LogoutResult(){
     }
-    public RegisterResult register(RegisterRequest user) throws UnauthorizedException, BadRequestException {
+    public RegisterResult register(RegisterRequest user) throws UnauthorizedException, BadRequestException, AlreadyTakenException {
+        if (user.username == null || user.password == null || user.email == null) {
+            throw new BadRequestException("Error: bad request");
+        }
         UserData userData;
         //create user
         try{
             userData = new UserData(user.username(), user.password(), user.email());
             MemoryUser.getInstance().createUser(userData);
         } catch (DataAccessException e) {
-            throw new BadRequestException("Bad Request"); //When do I throw this exception? Is this in the right place? What about the ALreadyTaken Exception? When do I do that??
+            throw new AlreadyTakenException("Error: already taken");
         }
         //creat auth
         String authToken = UUID.randomUUID().toString();
@@ -37,40 +40,40 @@ public class UserService {
         try {
             MemoryAuth.getInstance().createAuth(authData);
         } catch (DataAccessException e) {
-            throw new UnauthorizedException("Authorization failed");
+            throw new UnauthorizedException("Error: Authorization failed");
         }
         return new RegisterResult(user.username(), authToken);
     }
-    public LoginResult login(LoginRequest user) throws UnauthorizedException{
+    public LoginResult login(LoginRequest user) throws UnauthorizedException, BadRequestException {
         UserData userData;
         try{
             userData = MemoryUser.getInstance().getUser(user.username());
         } catch (DataAccessException e) {
-            throw new UnauthorizedException("User not found");
+            throw new BadRequestException("Error: User not found"); // putting for 500
         }
         if (!userData.password().equals(user.password())) {
-            throw new UnauthorizedException("Wrong password");
+            throw new BadRequestException("Error: Wrong password"); // putting for 500
         }
         String authToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData(authToken,user.username);
         try {
             MemoryAuth.getInstance().createAuth(authData);
         } catch (DataAccessException e) {
-            throw new UnauthorizedException("Authorization failed");
+            throw new UnauthorizedException("Error: unauthorized");
         }
         return new LoginResult(user.username, authToken);
     }
-    public LogoutResult logout(String authToken) throws UnauthorizedException{
+    public LogoutResult logout(String authToken) throws UnauthorizedException, BadRequestException {
         AuthData authData;
         try{
             authData = MemoryAuth.getInstance().getAuth(authToken);
         } catch (DataAccessException e) {
-            throw new UnauthorizedException("Authorization failed");
+            throw new UnauthorizedException("Error: unauthorized");
         }
         try {
             MemoryAuth.getInstance().deleteAuth(authData);
         } catch (DataAccessException e) {
-            throw new UnauthorizedException("Logout failed");
+            throw new BadRequestException("Error: Logout failed"); //putting for 500
         }
         return new LogoutResult();
     }

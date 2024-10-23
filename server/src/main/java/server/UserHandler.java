@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import model.AuthData;
+import service.AlreadyTakenException;
 import service.BadRequestException;
 import service.UnauthorizedException;
 import service.UserService;
@@ -28,7 +29,13 @@ public class UserHandler {
             res.status(400);
             res.body(serializer.toJson(temp));
             return res.body();
-        } catch (UnauthorizedException e) { //catch "other" exception? Like an else after all the elifs? runtime?
+        } catch (AlreadyTakenException e){
+            Map<String, Object> temp = new HashMap<>();
+            temp.put("message", e.getMessage());
+            res.status(403);
+            res.body(serializer.toJson(temp));
+            return res.body();
+        } catch (UnauthorizedException e) { //how to do the 500 ones. catch "other" exception?
             Map<String, String> temp = new HashMap<>();
             temp.put("message", e.getMessage());
             res.status(500);
@@ -50,6 +57,12 @@ public class UserHandler {
             res.status(401);
             res.body(serializer.toJson(temp));
             return res.body();
+        } catch (BadRequestException e) { //putting this 500 as bad req exception
+            Map<String, Object> temp = new HashMap<>();
+            temp.put("message", e.getMessage());
+            res.status(500);
+            res.body(serializer.toJson(temp));
+            return res.body();
         }
     }
     public Object logout(Request req, Response res){
@@ -62,6 +75,12 @@ public class UserHandler {
             Map<String, String> temp = new HashMap<>();
             temp.put("message", e.getMessage());
             res.status(401);
+            res.body(serializer.toJson(temp));
+            return res.body();
+        } catch (BadRequestException e) { //putting this 500 as bad req exception
+            Map<String, String> temp = new HashMap<>();
+            temp.put("message", e.getMessage());
+            res.status(500);
             res.body(serializer.toJson(temp));
             return res.body();
         }

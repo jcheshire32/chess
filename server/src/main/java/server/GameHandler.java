@@ -4,15 +4,13 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
-import service.GameService;
-import service.UnauthorizedException;
+import service.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import service.UserService;
 import spark.Response;
 import spark.Request;
 
@@ -31,6 +29,12 @@ public class GameHandler {
             res.status(401);
             res.body(serializer.toJson(temp));
             return res.body();
+        } catch (BadRequestException e) { //putting this 500 as bad req exception
+            Map<String, Object> temp = new HashMap<>();
+            temp.put("message", e.getMessage());
+            res.status(500);
+            res.body(serializer.toJson(temp));
+            return res.body();
         }
     }
     public Object createGame(Request req, Response res){ //takes a JSON object and a nonJSON object
@@ -41,13 +45,25 @@ public class GameHandler {
         try {
             var CreateGameResult = gameService.createGame(authToken, CreateGameRequest.gameName()); //Double check with TA michael this line works
             return serializer.toJson(CreateGameResult);
-        } catch (UnauthorizedException e) {
+        } catch (BadRequestException e) {
+            Map<String, String> temp = new HashMap<>();
+            temp.put("message", e.getMessage());
+            res.status(400);
+            res.body(serializer.toJson(temp));
+            return res.body();
+        } catch (UnauthorizedException e){
             Map<String, String> temp = new HashMap<>();
             temp.put("message", e.getMessage());
             res.status(401);
             res.body(serializer.toJson(temp));
             return res.body();
-        } //make other exceptions
+        } catch (AlreadyTakenException e){
+            Map<String, String> temp = new HashMap<>();
+            temp.put("message", e.getMessage());
+            res.status(500);
+            res.body(serializer.toJson(temp));
+            return res.body();
+        }
     }
     public Object joinGame(Request req, Response res){
         var serializer = new Gson();
@@ -57,13 +73,32 @@ public class GameHandler {
         try {
             var JoinGameResult = gameService.joinGame(authToken, JoinGameRequest);
             return serializer.toJson(JoinGameResult);
-        } catch (UnauthorizedException e) {
+        } catch (BadRequestException e) {
+            Map<String, String> temp = new HashMap<>();
+            temp.put("message", e.getMessage());
+            res.status(400);
+            res.body(serializer.toJson(temp));
+            return res.body();
+        }
+        catch (UnauthorizedException e) {
             Map<String, String> temp = new HashMap<>();
             temp.put("message", e.getMessage());
             res.status(401);
             res.body(serializer.toJson(temp));
             return res.body();
-        } //make other exceptions...
+        } catch (AlreadyTakenException e){
+            Map<String, String> temp = new HashMap<>();
+            temp.put("message", e.getMessage());
+            res.status(403);
+            res.body(serializer.toJson(temp));
+            return res.body();
+        } catch (OtherException e) {
+            Map<String, String> temp = new HashMap<>();
+            temp.put("message", e.getMessage());
+            res.status(500);
+            res.body(serializer.toJson(temp));
+            return res.body();
+        }
     }
-    //error message needs a JSON object that says error after it 500 = data base problem
+    //500 = data base problem??
 }
