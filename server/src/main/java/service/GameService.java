@@ -45,7 +45,7 @@ public class GameService {
                 throw new BadRequestException("Error: bad request");
             }
         } catch (BadRequestException e) {
-            throw new RuntimeException(e);
+            throw new BadRequestException("Error: bad request");
         } catch (DataAccessException e) {
             throw new UnauthorizedException("Error: unauthorized");
         }

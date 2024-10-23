@@ -67,6 +67,9 @@ public class UserService {
         AuthData authData;
         try{
             authData = MemoryAuth.getInstance().getAuth(authToken);
+            if (authData == null) {
+                throw new UnauthorizedException("Error: unauthorized");
+            }
         } catch (DataAccessException e) {
             throw new UnauthorizedException("Error: unauthorized");
         }
