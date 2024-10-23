@@ -8,6 +8,6 @@ public interface GameDAO {
     List<GameData> getGames() throws DataAccessException;
     void createGame(GameData game) throws DataAccessException;
     GameData findGame(int gameID) throws DataAccessException;
-    void joinGame(GameData gameData) throws DataAccessException;
+    void updateGame(GameData gameData) throws DataAccessException;
     void clear() throws DataAccessException;
 }

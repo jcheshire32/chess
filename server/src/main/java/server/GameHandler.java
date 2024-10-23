@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import service.UserService;
 import spark.Response;
 import spark.Request;
 
@@ -33,11 +34,11 @@ public class GameHandler {
     }
     public Object createGame(Request req, Response res){ //takes a JSON object and a nonJSON object
         var serializer = new Gson();
+        var CreateGameRequest = serializer.fromJson(req.body(), GameService.CreateGameRequest.class);
         GameService gameService = new GameService();
         String authToken = req.headers("Authorization");
-        String gameName = req.queryParams("gameName"); //TA said the user provides the game name, but the webpage doesn't look like it should
         try {
-            var CreateGameResult = gameService.createGame(authToken, gameName);
+            var CreateGameResult = gameService.createGame(authToken, CreateGameRequest.gameName()); //Double check with TA michael this line works
             return serializer.toJson(CreateGameResult);
         } catch (UnauthorizedException e) {
             Map<String, String> temp = new HashMap<>();
@@ -45,6 +46,6 @@ public class GameHandler {
             res.status(401);
             res.body(serializer.toJson(temp));
             return res.body();
-        }
+        } //make other exceptions
     }
 }

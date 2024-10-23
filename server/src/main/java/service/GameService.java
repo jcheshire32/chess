@@ -13,11 +13,12 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GameService {
+    //delete the ones I don't use, make the other top level
     public record ListGamesRequest(AuthData authToken){}
     public record ListGamesResult(List<GameData> games){}
-    public record CreateGameRequest(AuthData authToken){}
+    public record CreateGameRequest(String gameName){}
     public record CreateGameResult(int gameID){}
-    public record JoinGameRequest(AuthData authToken){}
+    public record JoinGameRequest(ChessGame.TeamColor playerColor, int gameID){}
     public record JoinGameResult(){}
 
     public ListGamesResult listGames(String authToken) throws UnauthorizedException {
@@ -74,10 +75,11 @@ public class GameService {
         }
         return false;
     }
-    public JoinGameResult joinGame(String authToken, GameData game) throws UnauthorizedException {
+    public JoinGameResult joinGame(String authToken, JoinGameRequest game) throws UnauthorizedException {
         AuthData authData;
         try {
-            if (MemoryAuth.getInstance().getAuth(authToken) == null){
+            authData = MemoryAuth.getInstance().getAuth(authToken);
+            if (authData == null){
                 throw new UnauthorizedException("Authorization failed");
             }
         } catch (DataAccessException e) {
@@ -94,6 +96,14 @@ public class GameService {
         } catch (DataAccessException e) {
             throw new UnauthorizedException("Couldn't join game");
         }
-        //JOIN GAME
+//        //UPDATE GAME
+//        //make sure the team they're trying to join is null or already their name
+//        if (game.playerColor == ChessGame.TeamColor.WHITE) {
+//            game2join = new GameData(game2join.gameID(), authData.username(), null, game2join.gameName(), game2join.game());
+//        } else if ()//player is black
+//        else {
+//            //bad req
+        //}
+        return null;
     }
 }

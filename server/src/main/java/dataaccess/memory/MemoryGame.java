@@ -34,7 +34,7 @@ public class MemoryGame implements GameDAO {
     }
 
     @Override
-    public void joinGame(GameData gameData) throws DataAccessException {
+    public void updateGame(GameData gameData) throws DataAccessException {
         games.add(gameData);
     }
 
