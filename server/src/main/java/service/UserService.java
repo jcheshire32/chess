@@ -49,10 +49,10 @@ public class UserService {
         try{
             userData = MemoryUser.getInstance().getUser(user.username());
         } catch (DataAccessException e) {
-            throw new BadRequestException("Error: User not found"); // putting for 500
+            throw new UnauthorizedException("Error: User not found"); //401
         }
         if (!userData.password().equals(user.password())) {
-            throw new BadRequestException("Error: Wrong password"); // putting for 500
+            throw new UnauthorizedException("Error: Wrong password"); //401
         }
         String authToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData(authToken,user.username);

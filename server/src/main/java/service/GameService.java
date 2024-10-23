@@ -101,7 +101,7 @@ public class GameService {
         } catch (DataAccessException e) {
             throw new OtherException("Error: Couldn't join game");
         } catch (OtherException e) {
-            throw new RuntimeException(e);
+            throw new OtherException("Error: Couldn't find game");
         }
         //UPDATE GAME
         //make sure the team they're trying to join is null or already their name

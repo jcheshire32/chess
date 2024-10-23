@@ -79,8 +79,7 @@ public class GameHandler {
             res.status(400);
             res.body(serializer.toJson(temp));
             return res.body();
-        }
-        catch (UnauthorizedException e) {
+        } catch (UnauthorizedException e) {
             Map<String, String> temp = new HashMap<>();
             temp.put("message", e.getMessage());
             res.status(401);

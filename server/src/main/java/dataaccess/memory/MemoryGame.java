@@ -5,12 +5,13 @@ import dataaccess.GameDAO;
 import model.GameData;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class MemoryGame implements GameDAO {
 
-    private List<GameData> games = new ArrayList<GameData>();
+    private Map<Integer, GameData> games = new HashMap<Integer, GameData>();
 
     private static final MemoryGame instance = new MemoryGame();
 
@@ -20,12 +21,12 @@ public class MemoryGame implements GameDAO {
 
     @Override
     public List<GameData> getGames() throws DataAccessException {//LIST ALL THE GAMES
-        return games;
+        return new ArrayList<>(games.values()); //series of IJ suggestions turned my for loop to this one line
     }
 
     @Override
     public void createGame(GameData game) throws DataAccessException {
-        games.add(game);
+        games.put(game.gameID(),game);
     }
 
     @Override
@@ -35,7 +36,7 @@ public class MemoryGame implements GameDAO {
 
     @Override
     public void updateGame(GameData gameData) throws DataAccessException {
-        games.add(gameData);
+        games.put(gameData.gameID(), gameData);
     }
 
     @Override
