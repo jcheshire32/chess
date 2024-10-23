@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import model.AuthData;
+import service.BadRequestException;
 import service.UnauthorizedException;
 import service.UserService;
 import spark.Request;
@@ -21,10 +22,16 @@ public class UserHandler {
         try {
             var registerResult = registerService.register(registerRequest);
             return serializer.toJson(registerResult);
-        } catch (UnauthorizedException e) {
+        } catch (BadRequestException e) {
+            Map<String, Object> temp = new HashMap<>();
+            temp.put("message", e.getMessage());
+            res.status(400);
+            res.body(serializer.toJson(temp));
+            return res.body();
+        } catch (UnauthorizedException e) { //catch "other" exception? Like an else after all the elifs? runtime?
             Map<String, String> temp = new HashMap<>();
             temp.put("message", e.getMessage());
-            res.status(401);
+            res.status(500);
             res.body(serializer.toJson(temp));
             return res.body();
         }

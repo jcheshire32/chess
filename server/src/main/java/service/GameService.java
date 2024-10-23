@@ -96,14 +96,25 @@ public class GameService {
         } catch (DataAccessException e) {
             throw new UnauthorizedException("Couldn't join game");
         }
-//        //UPDATE GAME
-//        //make sure the team they're trying to join is null or already their name
-//        if (game.playerColor == ChessGame.TeamColor.WHITE) {
-//            game2join = new GameData(game2join.gameID(), authData.username(), null, game2join.gameName(), game2join.game());
-//        } else if ()//player is black
-//        else {
-//            //bad req
-        //}
-        return null;
+        //UPDATE GAME
+        //make sure the team they're trying to join is null or already their name...not sure how to implement this...
+        if (game.playerColor == ChessGame.TeamColor.WHITE) {
+            if (game2join.whiteUsername() == null) {
+                game2join = new GameData(game2join.gameID(), authData.username(), null, game2join.gameName(), game2join.game());
+            } else {
+                throw new UnauthorizedException("Looks like you have already joined this game bruv");
+            }
+        } else if (game.playerColor == ChessGame.TeamColor.BLACK){
+            if (game2join.blackUsername() == null) {
+                game2join = new GameData(game2join.gameID(), null, authData.username(), game2join.gameName(), game2join.game());
+            } else {
+                throw new UnauthorizedException("Looks like you have already joined this game bruv");
+            }
+        }
+        else {
+            throw new UnauthorizedException("Bad game request");
+        }
+        return new JoinGameResult(); //record at top look okay?
+        //Do I add game2join as a parameter for the record of JoinGameResult?
     }
 }

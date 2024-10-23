@@ -22,14 +22,14 @@ public class UserService {
     }
     public record LogoutResult(){
     }
-    public RegisterResult register(RegisterRequest user) throws UnauthorizedException{
+    public RegisterResult register(RegisterRequest user) throws UnauthorizedException, BadRequestException {
         UserData userData;
         //create user
         try{
             userData = new UserData(user.username(), user.password(), user.email());
             MemoryUser.getInstance().createUser(userData);
         } catch (DataAccessException e) {
-            throw new UnauthorizedException("Creation failed");
+            throw new BadRequestException("Bad Request"); //When do I throw this exception? Is this in the right place? What about the ALreadyTaken Exception? When do I do that??
         }
         //creat auth
         String authToken = UUID.randomUUID().toString();

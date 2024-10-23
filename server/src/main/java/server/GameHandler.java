@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
@@ -48,4 +49,21 @@ public class GameHandler {
             return res.body();
         } //make other exceptions
     }
+    public Object joinGame(Request req, Response res){
+        var serializer = new Gson();
+        var JoinGameRequest = serializer.fromJson(req.body(), GameService.JoinGameRequest.class);
+        GameService gameService = new GameService();
+        String authToken = req.headers("Authorization");
+        try {
+            var JoinGameResult = gameService.joinGame(authToken, JoinGameRequest);
+            return serializer.toJson(JoinGameResult);
+        } catch (UnauthorizedException e) {
+            Map<String, String> temp = new HashMap<>();
+            temp.put("message", e.getMessage());
+            res.status(401);
+            res.body(serializer.toJson(temp));
+            return res.body();
+        } //make other exceptions...
+    }
+    //error message needs a JSON object that says error after it 500 = data base problem
 }
