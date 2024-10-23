@@ -21,16 +21,12 @@ public class GameService {
     public record JoinGameRequest(ChessGame.TeamColor playerColor, int gameID){}
     public record JoinGameResult(){}
 
-    public ListGamesResult listGames(String authToken) throws UnauthorizedException, BadRequestException {
+    public ListGamesResult listGames(String authToken) throws UnauthorizedException, BadRequestException, DataAccessException {
+        List<GameData> games;
         try {
             if (MemoryAuth.getInstance().getAuth(authToken) == null){
                 throw new UnauthorizedException("Error: unauthorized");
             }
-        } catch (DataAccessException e) {
-            throw new UnauthorizedException("Error: unauthorized");
-        }
-        List<GameData> games;
-        try {
             MemoryGame gameStorage = MemoryGame.getInstance();
             games = gameStorage.getGames();
         } catch (DataAccessException e) {
@@ -38,16 +34,17 @@ public class GameService {
         }
         return new ListGamesResult(games);
     }
-    public CreateGameResult createGame(String authToken, String gameName) throws UnauthorizedException, BadRequestException, AlreadyTakenException {
+    public CreateGameResult createGame(String authToken, String gameName) throws UnauthorizedException, BadRequestException, ServiceException {
         AuthData authData;
         try {
-            if (MemoryAuth.getInstance().getAuth(authToken) == null || gameName == null){ //null means bad req, gameName also?
+            if (MemoryAuth.getInstance().getAuth(authToken) == null) { //null means bad req, gameName also?
+                throw new UnauthorizedException("Error: Unauthorized");
+            }
+            if (gameName == null){
                 throw new BadRequestException("Error: bad request");
             }
-        } catch (BadRequestException e) {
-            throw new BadRequestException("Error: bad request");
         } catch (DataAccessException e) {
-            throw new UnauthorizedException("Error: unauthorized");
+            throw new ServiceException("Error: " + e.getMessage());
         }
         MemoryGame gameStorage = MemoryGame.getInstance();
         int gameID;
@@ -59,16 +56,16 @@ public class GameService {
         try {
             MemoryGame.getInstance().createGame(game_val);
         } catch (DataAccessException e) {
-            throw new AlreadyTakenException("Error: Couldn't create game"); //Using this for the 500
+            throw new ServiceException("Error: " + e.getMessage());
         }
         return new CreateGameResult(gameID);
     }
-    boolean isDuplicateGameID(int gameID, MemoryGame gameStorage) throws AlreadyTakenException {
+    boolean isDuplicateGameID(int gameID, MemoryGame gameStorage) throws ServiceException {
         List<GameData> games;
         try {
             games = gameStorage.getGames();
         } catch (DataAccessException e) {
-            throw new AlreadyTakenException("Error: Couldn't get any games");
+            throw new ServiceException("Error: " + e.getMessage());
         }
         for (GameData game : games) {
             if (game.gameID() == gameID) { //if there IS a dup
@@ -78,10 +75,10 @@ public class GameService {
         return false;
     }
     public JoinGameResult joinGame(String authToken, JoinGameRequest game) throws UnauthorizedException, BadRequestException, AlreadyTakenException, OtherException {
-        AuthData authData;
+        String username;
         try {
-            authData = MemoryAuth.getInstance().getAuth(authToken);
-            if (authData == null){
+            username = MemoryAuth.getInstance().getAuth(authToken);
+            if (username == null){
                 throw new UnauthorizedException("Error: unauthorized");
             }
         } catch (DataAccessException e) {
@@ -96,30 +93,31 @@ public class GameService {
         try {
             game2join = gameStorage.findGame(game.gameID()); //from parameter
             if (game2join == null) {
-                throw new OtherException("Error: Couldn't find game");
+                throw new BadRequestException("Error: bad request");
             }
         } catch (DataAccessException e) {
             throw new OtherException("Error: Couldn't join game");
-        } catch (OtherException e) {
-            throw new OtherException("Error: Couldn't find game");
         }
         //UPDATE GAME
         //make sure the team they're trying to join is null or already their name
-        if (game.playerColor == ChessGame.TeamColor.WHITE) {
-            if (game2join.whiteUsername() == null) {
-                game2join = new GameData(game2join.gameID(), authData.username(), null, game2join.gameName(), game2join.game());
-            } else {
-                throw new AlreadyTakenException("Error: already taken");
+        try {
+            if (game.playerColor == ChessGame.TeamColor.WHITE) {
+                if (game2join.whiteUsername() == null) {
+                    gameStorage.updateGame(new GameData(game2join.gameID(), username, game2join.blackUsername(), game2join.gameName(), game2join.game()));
+                } else {
+                    throw new AlreadyTakenException("Error: already taken");
+                }
+            } else if (game.playerColor == ChessGame.TeamColor.BLACK) {
+                if (game2join.blackUsername() == null) {
+                    gameStorage.updateGame(new GameData(game2join.gameID(), game2join.whiteUsername(), username, game2join.gameName(), game2join.game()));
+                } else {
+                    throw new AlreadyTakenException("Error: already taken");
+                }
+            } else { //Neither white nor black
+                throw new BadRequestException("Error: bad request");
             }
-        } else if (game.playerColor == ChessGame.TeamColor.BLACK){
-            if (game2join.blackUsername() == null) {
-                game2join = new GameData(game2join.gameID(), null, authData.username(), game2join.gameName(), game2join.game());
-            } else {
-                throw new AlreadyTakenException("Error: already taken");
-            }
-        }
-        else { //Neither white nor black
-            throw new BadRequestException("Error: bad request");
+        } catch (DataAccessException e) {
+            throw new OtherException("Error: " + e.getMessage());
         }
         return new JoinGameResult(); //record at top look okay?
         //Do I add game2join as a parameter for the record of JoinGameResult?

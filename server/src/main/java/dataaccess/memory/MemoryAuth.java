@@ -10,7 +10,7 @@ import java.util.Map;
 public class MemoryAuth implements AuthDAO {
     //authToken
     //username
-    Map<String, AuthData> authDataMap = new HashMap<>();
+    Map<String, String> authDataMap = new HashMap<>();
     private static final MemoryAuth instance = new MemoryAuth();
 
     public static MemoryAuth getInstance() {
@@ -22,21 +22,21 @@ public class MemoryAuth implements AuthDAO {
 
     @Override
     public void createAuth(AuthData authData) throws DataAccessException {
-        authDataMap.put(authData.authToken(), authData);
+        authDataMap.put(authData.authToken(), authData.username());
     }
 
     @Override
-    public AuthData getAuth(String authToken) throws DataAccessException {
+    public String getAuth(String authToken) throws DataAccessException {
         return authDataMap.get(authToken);
     }
 
     @Override
-    public void deleteAuth(AuthData authData) throws DataAccessException {
-        authDataMap.remove(authData.authToken());
+    public void deleteAuth(String authToken) throws DataAccessException {
+        authDataMap.remove(authToken);
     }
 
     @Override
     public void clear() throws DataAccessException {
-
+        authDataMap.clear();
     }
 }

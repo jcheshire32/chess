@@ -64,7 +64,7 @@ public class UserService {
         return new LoginResult(user.username, authToken);
     }
     public LogoutResult logout(String authToken) throws UnauthorizedException, BadRequestException {
-        AuthData authData;
+        String authData;
         try{
             authData = MemoryAuth.getInstance().getAuth(authToken);
             if (authData == null) {
@@ -74,7 +74,7 @@ public class UserService {
             throw new UnauthorizedException("Error: unauthorized");
         }
         try {
-            MemoryAuth.getInstance().deleteAuth(authData);
+            MemoryAuth.getInstance().deleteAuth(authToken);
         } catch (DataAccessException e) {
             throw new BadRequestException("Error: Logout failed"); //putting for 500
         }

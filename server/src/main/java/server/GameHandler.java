@@ -2,6 +2,7 @@ package server;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import model.AuthData;
 import model.GameData;
 import service.*;
@@ -32,6 +33,12 @@ public class GameHandler {
         } catch (BadRequestException e) { //putting this 500 as bad req exception
             Map<String, Object> temp = new HashMap<>();
             temp.put("message", e.getMessage());
+            res.status(400);
+            res.body(serializer.toJson(temp));
+            return res.body();
+        } catch (DataAccessException e) { //putting this 500 as bad req exception
+            Map<String, Object> temp = new HashMap<>();
+            temp.put("message", e.getMessage());
             res.status(500);
             res.body(serializer.toJson(temp));
             return res.body();
@@ -57,7 +64,7 @@ public class GameHandler {
             res.status(401);
             res.body(serializer.toJson(temp));
             return res.body();
-        } catch (AlreadyTakenException e){
+        } catch (ServiceException e){
             Map<String, String> temp = new HashMap<>();
             temp.put("message", e.getMessage());
             res.status(500);

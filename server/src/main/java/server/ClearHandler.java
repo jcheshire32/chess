@@ -1,6 +1,9 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
+import dataaccess.UserDAO;
 import service.ClearService;
 import service.OtherException;
 import spark.Request;
@@ -14,12 +17,10 @@ public class ClearHandler {
 
     public Object clear(Request req, Response res) { //should I do void or Object?
         var serializer = new Gson();
-        var clearRequest = serializer.fromJson(req.body(), ClearService.class);
         //do I need the lines here from userhandler?
         try {
-            var result = serializer.toJson(clearRequest);
-            res.body(result);
-            return res.body();
+            new ClearService().clear();
+            return "{}";
         } catch (Exception e) {
             Map<String, Object> temp = new HashMap<>();
             temp.put("message", e.getMessage());
