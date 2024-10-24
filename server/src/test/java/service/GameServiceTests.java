@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
@@ -20,8 +21,6 @@ public class GameServiceTests {
     private AuthDAO authDAO;
     private GameDAO gameDAO;
     private UserDAO userDAO;
-    private String existingAuth;
-
 
     @BeforeEach
     public void setup() {
@@ -29,8 +28,6 @@ public class GameServiceTests {
         userDAO = new MemoryUser();
         gameDAO = new MemoryGame();
         gameService = new GameService(authDAO,gameDAO);
-        //register a user here or each test
-//        existingAuth =
     }
 
     @Test
@@ -55,35 +52,65 @@ public class GameServiceTests {
     @Test
     @Order(2)
     @DisplayName("List Games Fail")
-    public void listGamesFail() {
+    public void listGamesFail() throws UnauthorizedException, BadRequestException, AlreadyTakenException, ServiceException, DataAccessException {
+        UserService.RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(new UserService.RegisterRequest("Jim", "Jim", "Jim"));
 
+        gameService.createGame(registeredPerson.authToken(), "game1");
+
+        String authtoken = authDAO.getAuth(registeredPerson.authToken());
+        Assertions.assertNotNull(authtoken);
+
+        Assertions.assertThrows(UnauthorizedException.class, ()-> gameService.listGames(authtoken));
     }
 
     @Test
     @Order(3)
     @DisplayName("Create Game Success")
-    public void createGamePositive() {
+    public void createGamePositive() throws ServiceException, UnauthorizedException, BadRequestException, AlreadyTakenException, DataAccessException {
+        UserService.RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(new UserService.RegisterRequest("Jim", "Jim", "Jim"));
+        Assertions.assertNotNull(registeredPerson.authToken());
 
+        GameService.CreateGameResult gameID = gameService.createGame(registeredPerson.authToken(), "game1");
+        Assertions.assertNotNull(gameID);
     }
 
     @Test
     @Order(4)
     @DisplayName("Create Game Fail")
-    public void createGameFail() {
+    public void createGameFail() throws UnauthorizedException, BadRequestException, AlreadyTakenException, ServiceException {
+        UserService.RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(new UserService.RegisterRequest("Jim", "Jim", "Jim"));
+        Assertions.assertNotNull(registeredPerson.authToken());
 
+        Assertions.assertThrows(BadRequestException.class, ()-> gameService.createGame(registeredPerson.authToken(), null));
     }
 
     @Test
     @Order(5)
     @DisplayName("Join Game Success")
-    public void joinGamePositive() {
+    public void joinGamePositive() throws UnauthorizedException, BadRequestException, AlreadyTakenException, ServiceException, DataAccessException, OtherException {
+        UserService.RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(new UserService.RegisterRequest("Jim", "Jim", "Jim"));
+        Assertions.assertNotNull(registeredPerson.authToken());
 
+        GameService.CreateGameResult gameID = gameService.createGame(registeredPerson.authToken(), "game1");
+        Assertions.assertNotNull(gameID);
+
+        gameService.joinGame(registeredPerson.authToken(), new GameService.JoinGameRequest(ChessGame.TeamColor.WHITE, gameID.gameID()));
+        GameData game = gameDAO.findGame(gameID.gameID());
+        Assertions.assertNotNull(game.whiteUsername());
+        Assertions.assertEquals("Jim", game.whiteUsername());
     }
 
     @Test
     @Order(6)
     @DisplayName("Join Game Fail")
-    public void joinGameFail() {
+    public void joinGameFail() throws UnauthorizedException, BadRequestException, AlreadyTakenException, ServiceException, OtherException, DataAccessException {
+        UserService.RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(new UserService.RegisterRequest("Jim", "Jim", "Jim"));
+        Assertions.assertNotNull(registeredPerson.authToken());
 
+        GameService.CreateGameResult gameID = gameService.createGame(registeredPerson.authToken(), "game1");
+        Assertions.assertNotNull(gameID);
+
+        GameService.JoinGameRequest request = new GameService.JoinGameRequest(ChessGame.TeamColor.WHITE, 123);
+        Assertions.assertThrows(BadRequestException.class, ()-> gameService.joinGame(registeredPerson.authToken(), request));
     }
 }
