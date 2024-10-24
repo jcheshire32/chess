@@ -17,7 +17,7 @@ public class MemoryUser implements UserDAO {
         return instance;
     }
 
-    private MemoryUser() {
+    public MemoryUser() {
     }
 
     @Override

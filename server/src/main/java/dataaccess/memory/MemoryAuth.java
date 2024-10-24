@@ -17,7 +17,7 @@ public class MemoryAuth implements AuthDAO {
         return instance;
     }
 
-    private MemoryAuth() {
+    public MemoryAuth() {
     }
 
     @Override

@@ -15,11 +15,21 @@ import java.util.Map;
 public class ClearHandler {
     public ClearService clearService;
 
+    AuthDAO authDAO;
+    UserDAO userDAO;
+    GameDAO gameDAO;
+
+    public ClearHandler(AuthDAO authDAO, UserDAO userDAO, GameDAO gameDAO){
+        this.authDAO = authDAO;
+        this.userDAO = userDAO;
+        this.gameDAO = gameDAO;
+    }
+
     public Object clear(Request req, Response res) { //should I do void or Object?
         var serializer = new Gson();
         //do I need the lines here from userhandler?
         try {
-            new ClearService().clear();
+            new ClearService(authDAO,userDAO,gameDAO).clear();
             return "{}";
         } catch (Exception e) {
             Map<String, Object> temp = new HashMap<>();

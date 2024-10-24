@@ -1,6 +1,8 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.AuthDAO;
+import dataaccess.UserDAO;
 import model.AuthData;
 import service.AlreadyTakenException;
 import service.BadRequestException;
@@ -14,12 +16,17 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class UserHandler {
-    //register,login,logout
-    //return type? Json??
+    private AuthDAO authDAO;
+    private UserDAO userDAO;
+
+    public UserHandler(AuthDAO authDAO, UserDAO userDAO){
+        this.authDAO = authDAO;
+        this.userDAO = userDAO;
+    }
     public Object register(Request req, Response res){
         var serializer = new Gson();
         var registerRequest = serializer.fromJson(req.body(), UserService.RegisterRequest.class);
-        UserService registerService = new UserService();
+        UserService registerService = new UserService(authDAO,userDAO);
         try {
             var registerResult = registerService.register(registerRequest);
             return serializer.toJson(registerResult);
@@ -47,7 +54,7 @@ public class UserHandler {
         var serializer = new Gson();
         var loginRequest = serializer.fromJson(req.body(), UserService.LoginRequest.class);
         //stuff
-        UserService loginService = new UserService();
+        UserService loginService = new UserService(authDAO,userDAO);
         try {
             var loginResult = loginService.login(loginRequest);
             return serializer.toJson(loginResult);
@@ -67,7 +74,7 @@ public class UserHandler {
     }
     public Object logout(Request req, Response res){
         var serializer = new Gson();
-        UserService logoutService = new UserService();
+        UserService logoutService = new UserService(authDAO,userDAO);
         String authToken = req.headers("Authorization");
         try {
             return serializer.toJson(logoutService.logout(authToken));

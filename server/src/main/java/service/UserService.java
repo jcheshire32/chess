@@ -1,6 +1,9 @@
 package service;
 
+import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
+import dataaccess.GameDAO;
+import dataaccess.UserDAO;
 import model.AuthData;
 import model.UserData;
 import dataaccess.memory.MemoryUser;
@@ -22,6 +25,15 @@ public class UserService {
     }
     public record LogoutResult(){
     }
+
+    private AuthDAO authDAO;
+    private UserDAO userDAO;
+
+    public UserService(AuthDAO authDAO, UserDAO userDAO){
+        this.authDAO = authDAO;
+        this.userDAO = userDAO;
+    }
+
     public RegisterResult register(RegisterRequest user) throws UnauthorizedException, BadRequestException, AlreadyTakenException {
         if (user.username == null || user.password == null || user.email == null) {
             throw new BadRequestException("Error: bad request");
@@ -30,7 +42,7 @@ public class UserService {
         //create user
         try{
             userData = new UserData(user.username(), user.password(), user.email());
-            MemoryUser.getInstance().createUser(userData);
+            userDAO.createUser(userData);
         } catch (DataAccessException e) {
             throw new AlreadyTakenException("Error: already taken");
         }
@@ -38,7 +50,7 @@ public class UserService {
         String authToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData(authToken,user.username());
         try {
-            MemoryAuth.getInstance().createAuth(authData);
+            authDAO.createAuth(authData);
         } catch (DataAccessException e) {
             throw new UnauthorizedException("Error: Authorization failed");
         }
@@ -47,7 +59,7 @@ public class UserService {
     public LoginResult login(LoginRequest user) throws UnauthorizedException, BadRequestException {
         UserData userData;
         try{
-            userData = MemoryUser.getInstance().getUser(user.username());
+            userData = userDAO.getUser(user.username());
         } catch (DataAccessException e) {
             throw new UnauthorizedException("Error: User not found"); //401
         }
@@ -57,7 +69,7 @@ public class UserService {
         String authToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData(authToken,user.username);
         try {
-            MemoryAuth.getInstance().createAuth(authData);
+            authDAO.createAuth(authData);
         } catch (DataAccessException e) {
             throw new UnauthorizedException("Error: unauthorized");
         }
@@ -66,7 +78,7 @@ public class UserService {
     public LogoutResult logout(String authToken) throws UnauthorizedException, BadRequestException {
         String authData;
         try{
-            authData = MemoryAuth.getInstance().getAuth(authToken);
+            authData = authDAO.getAuth(authToken);
             if (authData == null) {
                 throw new UnauthorizedException("Error: unauthorized");
             }
@@ -74,7 +86,7 @@ public class UserService {
             throw new UnauthorizedException("Error: unauthorized");
         }
         try {
-            MemoryAuth.getInstance().deleteAuth(authToken);
+            authDAO.deleteAuth(authToken);
         } catch (DataAccessException e) {
             throw new BadRequestException("Error: Logout failed"); //putting for 500
         }

@@ -1,7 +1,9 @@
 package service;
 
 import chess.ChessGame;
+import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
+import dataaccess.GameDAO;
 import dataaccess.memory.MemoryAuth;
 import dataaccess.memory.MemoryGame;
 import model.AuthData;
@@ -21,13 +23,21 @@ public class GameService {
     public record JoinGameRequest(ChessGame.TeamColor playerColor, int gameID){}
     public record JoinGameResult(){}
 
+    private AuthDAO authDAO;
+    private GameDAO gameDAO;
+
+    public GameService(AuthDAO authDAO, GameDAO gameDAO){
+        this.authDAO = authDAO;
+        this.gameDAO = gameDAO;
+    }
+
     public ListGamesResult listGames(String authToken) throws UnauthorizedException, BadRequestException, DataAccessException {
         List<GameData> games;
         try {
-            if (MemoryAuth.getInstance().getAuth(authToken) == null){
+            if (authDAO.getAuth(authToken) == null){
                 throw new UnauthorizedException("Error: unauthorized");
             }
-            MemoryGame gameStorage = MemoryGame.getInstance();
+            GameDAO gameStorage = gameDAO;
             games = gameStorage.getGames();
         } catch (DataAccessException e) {
             throw new BadRequestException("Error: Couldn't get any games"); // putting for 500
@@ -35,9 +45,8 @@ public class GameService {
         return new ListGamesResult(games);
     }
     public CreateGameResult createGame(String authToken, String gameName) throws UnauthorizedException, BadRequestException, ServiceException {
-        AuthData authData;
         try {
-            if (MemoryAuth.getInstance().getAuth(authToken) == null) { //null means bad req, gameName also?
+            if (authDAO.getAuth(authToken) == null) {
                 throw new UnauthorizedException("Error: Unauthorized");
             }
             if (gameName == null){
@@ -46,7 +55,7 @@ public class GameService {
         } catch (DataAccessException e) {
             throw new ServiceException("Error: " + e.getMessage());
         }
-        MemoryGame gameStorage = MemoryGame.getInstance();
+        GameDAO gameStorage = gameDAO;
         int gameID;
         //IF GAME ID IS TAKEN
         do {
@@ -54,13 +63,13 @@ public class GameService {
         } while(isDuplicateGameID(gameID, gameStorage));
         GameData game_val = new GameData(gameID, null, null, gameName, new ChessGame());
         try {
-            MemoryGame.getInstance().createGame(game_val);
+            gameDAO.createGame(game_val);
         } catch (DataAccessException e) {
             throw new ServiceException("Error: " + e.getMessage());
         }
         return new CreateGameResult(gameID);
     }
-    boolean isDuplicateGameID(int gameID, MemoryGame gameStorage) throws ServiceException {
+    boolean isDuplicateGameID(int gameID, GameDAO gameStorage) throws ServiceException {
         List<GameData> games;
         try {
             games = gameStorage.getGames();
@@ -77,7 +86,7 @@ public class GameService {
     public JoinGameResult joinGame(String authToken, JoinGameRequest game) throws UnauthorizedException, BadRequestException, AlreadyTakenException, OtherException {
         String username;
         try {
-            username = MemoryAuth.getInstance().getAuth(authToken);
+            username = authDAO.getAuth(authToken);
             if (username == null){
                 throw new UnauthorizedException("Error: unauthorized");
             }
@@ -85,7 +94,7 @@ public class GameService {
             throw new UnauthorizedException("Error: unauthorized");
         }
         //FIND GAME
-        MemoryGame gameStorage = MemoryGame.getInstance();
+        GameDAO gameStorage = gameDAO;
         if (gameStorage == null){
             throw new BadRequestException("Error: bad request");
         }
@@ -119,7 +128,6 @@ public class GameService {
         } catch (DataAccessException e) {
             throw new OtherException("Error: " + e.getMessage());
         }
-        return new JoinGameResult(); //record at top look okay?
-        //Do I add game2join as a parameter for the record of JoinGameResult?
+        return new JoinGameResult();
     }
 }

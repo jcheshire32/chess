@@ -2,7 +2,9 @@ package server;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
+import dataaccess.GameDAO;
 import model.AuthData;
 import model.GameData;
 import service.*;
@@ -17,9 +19,17 @@ import spark.Request;
 
 public class GameHandler {
 
+    private AuthDAO authDAO;
+    private GameDAO gameDAO;
+
+    public GameHandler(AuthDAO authDAO, GameDAO gameDAO){
+        this.authDAO = authDAO;
+        this.gameDAO = gameDAO;
+    }
+
     public Object listGames(Request req, Response res){
         var serializer = new Gson();
-        GameService gameService = new GameService();
+        GameService gameService = new GameService(authDAO,gameDAO);
         String authToken = req.headers("Authorization");
         try {
             var ListGamesResult = gameService.listGames(authToken);
@@ -47,7 +57,7 @@ public class GameHandler {
     public Object createGame(Request req, Response res){ //takes a JSON object and a nonJSON object
         var serializer = new Gson();
         var CreateGameRequest = serializer.fromJson(req.body(), GameService.CreateGameRequest.class);
-        GameService gameService = new GameService();
+        GameService gameService = new GameService(authDAO, gameDAO);
         String authToken = req.headers("Authorization");
         try {
             var CreateGameResult = gameService.createGame(authToken, CreateGameRequest.gameName()); //Double check with TA michael this line works
@@ -75,7 +85,7 @@ public class GameHandler {
     public Object joinGame(Request req, Response res){
         var serializer = new Gson();
         var JoinGameRequest = serializer.fromJson(req.body(), GameService.JoinGameRequest.class);
-        GameService gameService = new GameService();
+        GameService gameService = new GameService(authDAO, gameDAO);
         String authToken = req.headers("Authorization");
         try {
             var JoinGameResult = gameService.joinGame(authToken, JoinGameRequest);

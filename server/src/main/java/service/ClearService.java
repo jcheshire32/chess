@@ -11,10 +11,16 @@ import dataaccess.memory.MemoryUser;
 
 public class ClearService {
     //get dao instance and clear
+    AuthDAO authDAO;
+    UserDAO userDAO;
+    GameDAO gameDAO;
+
+    public ClearService(AuthDAO authDAO, UserDAO userDAO, GameDAO gameDAO){
+        this.authDAO = authDAO;
+        this.userDAO = userDAO;
+        this.gameDAO = gameDAO;
+    }
     public void clear() throws OtherException{
-        AuthDAO authDAO = MemoryAuth.getInstance();
-        UserDAO userDAO = MemoryUser.getInstance();
-        GameDAO gameDAO = MemoryGame.getInstance();
         try {
             authDAO.clear();
             userDAO.clear();
