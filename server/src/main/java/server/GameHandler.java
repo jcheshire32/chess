@@ -32,8 +32,8 @@ public class GameHandler {
         GameService gameService = new GameService(authDAO,gameDAO);
         String authToken = req.headers("Authorization");
         try {
-            var ListGamesResult = gameService.listGames(authToken);
-            return serializer.toJson(ListGamesResult);
+            var listGamesResult = gameService.listGames(authToken);
+            return serializer.toJson(listGamesResult);
         } catch (UnauthorizedException e) {
             Map<String, String> temp = new HashMap<>();
             temp.put("message", e.getMessage());
@@ -60,8 +60,8 @@ public class GameHandler {
         GameService gameService = new GameService(authDAO, gameDAO);
         String authToken = req.headers("Authorization");
         try {
-            var CreateGameResult = gameService.createGame(authToken, CreateGameRequest.gameName()); //Double check with TA michael this line works
-            return serializer.toJson(CreateGameResult);
+            var createGameResult = gameService.createGame(authToken, CreateGameRequest.gameName()); //Double check with TA michael this line works
+            return serializer.toJson(createGameResult);
         } catch (BadRequestException e) {
             Map<String, String> temp = new HashMap<>();
             temp.put("message", e.getMessage());
@@ -88,8 +88,8 @@ public class GameHandler {
         GameService gameService = new GameService(authDAO, gameDAO);
         String authToken = req.headers("Authorization");
         try {
-            var JoinGameResult = gameService.joinGame(authToken, JoinGameRequest);
-            return serializer.toJson(JoinGameResult);
+            var joinGameResult = gameService.joinGame(authToken, JoinGameRequest);
+            return serializer.toJson(joinGameResult);
         } catch (BadRequestException e) {
             Map<String, String> temp = new HashMap<>();
             temp.put("message", e.getMessage());

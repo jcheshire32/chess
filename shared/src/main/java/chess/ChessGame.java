@@ -49,12 +49,12 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        Collection<ChessMove> good_moves = new ArrayList<>();
+        Collection<ChessMove> goodMoves = new ArrayList<>();
         if (getBoard().getPiece(startPosition) != null){
             Collection<ChessMove> moves = getBoard().getPiece(startPosition).pieceMoves(getBoard(), startPosition);
             for (ChessMove move : moves){
-                ChessPiece og_piece = board.getPiece(move.getStartPosition());
-                ChessPiece captured_piece = board.getPiece(move.getEndPosition()); //might be null
+                ChessPiece ogPiece = board.getPiece(move.getStartPosition());
+                ChessPiece capturedPiece = board.getPiece(move.getEndPosition()); //might be null
                 if (move.getPromotionPiece() != null){
                     board.addPiece(move.getEndPosition(), new ChessPiece(turn, move.getPromotionPiece()));
                 } else {
@@ -62,13 +62,13 @@ public class ChessGame {
                 }
                 //delete old position
                 board.addPiece(move.getStartPosition(), null);
-                if (!isInCheck(og_piece.getTeamColor())){
-                    good_moves.add(move);
+                if (!isInCheck(ogPiece.getTeamColor())){
+                    goodMoves.add(move);
                 }
-                board.addPiece(move.getEndPosition(), captured_piece);
-                board.addPiece(move.getStartPosition(), og_piece);
+                board.addPiece(move.getEndPosition(), capturedPiece);
+                board.addPiece(move.getStartPosition(), ogPiece);
             }
-            return good_moves;
+            return goodMoves;
         }
         return null;
     }
@@ -79,8 +79,8 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        ChessPiece og_piece = board.getPiece(move.getStartPosition());
-        if (og_piece == null){
+        ChessPiece ogPiece = board.getPiece(move.getStartPosition());
+        if (ogPiece == null){
             throw new InvalidMoveException();
         }
         if (board.getPiece(move.getStartPosition()).getTeamColor() != turn) {
@@ -89,7 +89,7 @@ public class ChessGame {
         if (!validMoves(move.getStartPosition()).contains(move)){
             throw new InvalidMoveException();
         }
-        ChessPiece captured_piece = board.getPiece(move.getEndPosition()); //might be null
+        ChessPiece capturedPiece = board.getPiece(move.getEndPosition()); //might be null
         if (move.getPromotionPiece() != null){
             board.addPiece(move.getEndPosition(), new ChessPiece(turn, move.getPromotionPiece()));
         } else {
@@ -98,8 +98,8 @@ public class ChessGame {
         //delete old position
         board.addPiece(move.getStartPosition(), null);
         if (isInCheck(turn)){
-            board.addPiece(move.getStartPosition(), og_piece);
-            board.addPiece(move.getEndPosition(), captured_piece);
+            board.addPiece(move.getStartPosition(), ogPiece);
+            board.addPiece(move.getEndPosition(), capturedPiece);
             throw new InvalidMoveException();
         }
         if (turn == TeamColor.WHITE){
@@ -120,10 +120,10 @@ public class ChessGame {
         //iterate over my pieces
         for (int row=1;row<9;row++) {
             for (int col=1;col<9;col++) {
-                ChessPosition current_position = new ChessPosition(row, col);
-                ChessPiece currentPiece = board.getPiece(current_position);
+                ChessPosition currentPosition = new ChessPosition(row, col);
+                ChessPiece currentPiece = board.getPiece(currentPosition);
                 if (currentPiece != null && currentPiece.getTeamColor() == teamColor && currentPiece.getPieceType() == ChessPiece.PieceType.KING) {
-                    kingPosition = current_position;
+                    kingPosition = currentPosition;
                     break;
                 }
             }
@@ -132,26 +132,26 @@ public class ChessGame {
             }
         }
         //iterate over the board and get all the opponents pieces
-        ArrayList<ChessPiece> bad_pieces = new ArrayList<>();
-        ArrayList<ChessPosition> bad_positions = new ArrayList<>();
+        ArrayList<ChessPiece> badPieces = new ArrayList<>();
+        ArrayList<ChessPosition> badPositions = new ArrayList<>();
         for (int row=1;row<9;row++) {
             for (int col=1;col<9;col++) {
-                ChessPosition current_position = new ChessPosition(row, col);
-                ChessPiece currentPiece = board.getPiece(current_position);
+                ChessPosition currentPosition = new ChessPosition(row, col);
+                ChessPiece currentPiece = board.getPiece(currentPosition);
                 if (currentPiece != null && currentPiece.getTeamColor() != teamColor) {
-                    bad_pieces.add(currentPiece);
-                    bad_positions.add(current_position);
+                    badPieces.add(currentPiece);
+                    badPositions.add(currentPosition);
                 }
             }
         }
         //iterate over all the bad guys pieces moves
-        for (int i=0;i<bad_pieces.size();i++) {
-            ChessPiece bad_guy = bad_pieces.get(i);
-            ChessPosition bad_guy_position = bad_positions.get(i);
+        for (int i=0;i<badPieces.size();i++) {
+            ChessPiece badGuy = badPieces.get(i);
+            ChessPosition badGuyPosition = badPositions.get(i);
 
-            Collection<ChessMove> bad_moves = bad_guy.pieceMoves(getBoard(), bad_guy_position);
+            Collection<ChessMove> badMoves = badGuy.pieceMoves(getBoard(), badGuyPosition);
             //see if in those arrays of moves, if it contains attack my king
-            for (ChessMove move : bad_moves) {
+            for (ChessMove move : badMoves) {
                 if (move.getEndPosition().equals(kingPosition)){
                     return true;
                 }
@@ -167,40 +167,40 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        ArrayList<ChessPiece> good_pieces = new ArrayList<>();
-        ArrayList<ChessPosition> good_positions = new ArrayList<>();
+        ArrayList<ChessPiece> goodPieces = new ArrayList<>();
+        ArrayList<ChessPosition> goodPositions = new ArrayList<>();
         //if incheck
         if (isInCheck(teamColor)) {
             //iterate over board for MY pieces
             for (int row=1;row<9;row++) {
                 for (int col=1;col<9;col++) {
-                    ChessPosition current_position = new ChessPosition(row, col);
-                    ChessPiece currentPiece = board.getPiece(current_position);
+                    ChessPosition currentPosition = new ChessPosition(row, col);
+                    ChessPiece currentPiece = board.getPiece(currentPosition);
                     if (currentPiece != null && currentPiece.getTeamColor() == teamColor) {
-                        good_pieces.add(currentPiece);
-                        good_positions.add(current_position);
+                        goodPieces.add(currentPiece);
+                        goodPositions.add(currentPosition);
                     }
                 }
             }
             //iterate over moves for my pieces
-            for (int i=0;i<good_pieces.size();i++) {
-                ChessPiece good_guy = good_pieces.get(i);
-                ChessPosition good_guy_position = good_positions.get(i);
+            for (int i=0;i<goodPieces.size();i++) {
+                ChessPiece goodGuy = goodPieces.get(i);
+                ChessPosition goodGuyPosition = goodPositions.get(i);
 
-                Collection<ChessMove> good_moves = good_guy.pieceMoves(getBoard(), good_guy_position);
+                Collection<ChessMove> goodMoves = goodGuy.pieceMoves(getBoard(), goodGuyPosition);
                 //Check if I can kill the guy attacking me or block him from killing my king
-                for (ChessMove move : good_moves) {
+                for (ChessMove move : goodMoves) {
                     //try each move and see if I'm still in check
-                    ChessPiece captured_piece = board.getPiece(move.getEndPosition());
+                    ChessPiece capturedPiece = board.getPiece(move.getEndPosition());
                     board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
                     board.addPiece(move.getStartPosition(), null);
                     //if still in check, undo and go back to the original board
-                    boolean still_in_check = isInCheck(teamColor);
+                    boolean stillInCheck = isInCheck(teamColor);
 
                     board.addPiece(move.getStartPosition(), board.getPiece(move.getEndPosition()));
-                    board.addPiece(move.getEndPosition(), captured_piece);
+                    board.addPiece(move.getEndPosition(), capturedPiece);
                     //if it does take me out of check return false
-                    if(!still_in_check) {
+                    if(!stillInCheck) {
                         return false;
                     }
                     //if it doesn't take me out of check, continue
@@ -222,28 +222,28 @@ public class ChessGame {
         if (turn != teamColor){
             return false;
         }
-        ArrayList<ChessPiece> good_pieces = new ArrayList<>();
-        ArrayList<ChessPosition> good_positions = new ArrayList<>();
+        ArrayList<ChessPiece> goodPieces = new ArrayList<>();
+        ArrayList<ChessPosition> goodPositions = new ArrayList<>();
         for (int row=1;row<9;row++) {
             for (int col=1;col<9;col++) {
-                ChessPosition current_position = new ChessPosition(row, col);
-                ChessPiece currentPiece = board.getPiece(current_position);
+                ChessPosition currentPosition = new ChessPosition(row, col);
+                ChessPiece currentPiece = board.getPiece(currentPosition);
                 if (currentPiece != null && currentPiece.getTeamColor() == teamColor) {
-                    good_pieces.add(currentPiece);
-                    good_positions.add(current_position);
+                    goodPieces.add(currentPiece);
+                    goodPositions.add(currentPosition);
                 }
             }
         }
         // iterate over the moves of my pieces
-        Collection<ChessMove> good_moves = new ArrayList<>();
-        for (int i=0;i<good_pieces.size();i++) {
-            ChessPosition good_guy_position = good_positions.get(i);
+        Collection<ChessMove> goodMoves = new ArrayList<>();
+        for (int i=0;i<goodPieces.size();i++) {
+            ChessPosition goodGuyPosition = goodPositions.get(i);
 
-            Collection<ChessMove> good_move = validMoves(good_guy_position);
-            good_moves.addAll(good_move);
+            Collection<ChessMove> goodMove = validMoves(goodGuyPosition);
+            goodMoves.addAll(goodMove);
         }
         // if that list of moves is empty, and I'm not in check. Stalemate
-        return good_moves.isEmpty() && !isInCheck(teamColor); //if else statement simplified
+        return goodMoves.isEmpty() && !isInCheck(teamColor); //if else statement simplified
     }
 
     /**

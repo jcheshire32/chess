@@ -10,37 +10,39 @@ import java.util.Objects;
  */
 public class ChessMove {
     //final or not...I think final?
-    private ChessPosition start_position;
-    private ChessPosition end_position;
-    private ChessPiece.PieceType promotion_piece;
+    private ChessPosition startPosition;
+    private ChessPosition endPosition;
+    private ChessPiece.PieceType promotionPiece;
 
     @Override
     public String toString() {
         return "ChessMove{" +
-                "start:" + start_position +
-                ", end:" + end_position +
-                ", promotion_piece=" + promotion_piece +
+                "start:" + startPosition +
+                ", end:" + endPosition +
+                ", promotion_piece=" + promotionPiece +
                 '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {return true;}
+        if (o == null || getClass() != o.getClass()) {return false;}
         ChessMove chessMove = (ChessMove) o;
-        return Objects.equals(start_position, chessMove.start_position) && Objects.equals(end_position, chessMove.end_position) && promotion_piece == chessMove.promotion_piece;
+        return Objects.equals(startPosition, chessMove.startPosition)
+                && Objects.equals(endPosition, chessMove.endPosition)
+                && promotionPiece == chessMove.promotionPiece;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(start_position, end_position, promotion_piece);
+        return Objects.hash(startPosition, endPosition, promotionPiece);
     }
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
-        this.start_position = startPosition;
-        this.end_position = endPosition;
-        this.promotion_piece = promotionPiece;
+        this.startPosition = startPosition;
+        this.endPosition = endPosition;
+        this.promotionPiece = promotionPiece;
     }
 
     /**
@@ -48,14 +50,14 @@ public class ChessMove {
      */
     public ChessPosition getStartPosition()
     {
-        return start_position;
+        return startPosition;
     }
 
     /**
      * @return ChessPosition of ending location
      */
     public ChessPosition getEndPosition() {
-        return end_position;
+        return endPosition;
     }
 
     /**
@@ -65,6 +67,6 @@ public class ChessMove {
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
     public ChessPiece.PieceType getPromotionPiece() {
-        return promotion_piece;
+        return promotionPiece;
     }
 }

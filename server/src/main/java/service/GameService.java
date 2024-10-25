@@ -31,7 +31,8 @@ public class GameService {
         this.gameDAO = gameDAO;
     }
 
-    public ListGamesResult listGames(String authToken) throws UnauthorizedException, BadRequestException, DataAccessException {
+    public ListGamesResult listGames(String authToken) throws
+            UnauthorizedException, BadRequestException, DataAccessException {
         List<GameData> games;
         try {
             if (authDAO.getAuth(authToken) == null){
@@ -44,7 +45,8 @@ public class GameService {
         }
         return new ListGamesResult(games);
     }
-    public CreateGameResult createGame(String authToken, String gameName) throws UnauthorizedException, BadRequestException, ServiceException {
+    public CreateGameResult createGame(String authToken, String gameName) throws
+            UnauthorizedException, BadRequestException, ServiceException {
         try {
             if (authDAO.getAuth(authToken) == null) {
                 throw new UnauthorizedException("Error: Unauthorized");
@@ -61,9 +63,9 @@ public class GameService {
         do {
             gameID = ThreadLocalRandom.current().nextInt(1, 1000);
         } while(isDuplicateGameID(gameID, gameStorage));
-        GameData game_val = new GameData(gameID, null, null, gameName, new ChessGame());
+        GameData gameVal = new GameData(gameID, null, null, gameName, new ChessGame());
         try {
-            gameDAO.createGame(game_val);
+            gameDAO.createGame(gameVal);
         } catch (DataAccessException e) {
             throw new ServiceException("Error: " + e.getMessage());
         }
@@ -83,7 +85,8 @@ public class GameService {
         }
         return false;
     }
-    public JoinGameResult joinGame(String authToken, JoinGameRequest game) throws UnauthorizedException, BadRequestException, AlreadyTakenException, OtherException {
+    public JoinGameResult joinGame(String authToken, JoinGameRequest game) throws
+            UnauthorizedException, BadRequestException, AlreadyTakenException, OtherException {
         String username;
         try {
             username = authDAO.getAuth(authToken);
@@ -112,13 +115,15 @@ public class GameService {
         try {
             if (game.playerColor == ChessGame.TeamColor.WHITE) {
                 if (game2join.whiteUsername() == null) {
-                    gameStorage.updateGame(new GameData(game2join.gameID(), username, game2join.blackUsername(), game2join.gameName(), game2join.game()));
+                    gameStorage.updateGame(new GameData(game2join.gameID(), username, game2join.blackUsername(),
+                            game2join.gameName(), game2join.game()));
                 } else {
                     throw new AlreadyTakenException("Error: already taken");
                 }
             } else if (game.playerColor == ChessGame.TeamColor.BLACK) {
                 if (game2join.blackUsername() == null) {
-                    gameStorage.updateGame(new GameData(game2join.gameID(), game2join.whiteUsername(), username, game2join.gameName(), game2join.game()));
+                    gameStorage.updateGame(new GameData(game2join.gameID(), game2join.whiteUsername(), username,
+                            game2join.gameName(), game2join.game()));
                 } else {
                     throw new AlreadyTakenException("Error: already taken");
                 }
