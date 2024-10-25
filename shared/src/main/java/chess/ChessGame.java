@@ -172,16 +172,7 @@ public class ChessGame {
         //if incheck
         if (isInCheck(teamColor)) {
             //iterate over board for MY pieces
-            for (int row=1;row<9;row++) {
-                for (int col=1;col<9;col++) {
-                    ChessPosition currentPosition = new ChessPosition(row, col);
-                    ChessPiece currentPiece = board.getPiece(currentPosition);
-                    if (currentPiece != null && currentPiece.getTeamColor() == teamColor) {
-                        goodPieces.add(currentPiece);
-                        goodPositions.add(currentPosition);
-                    }
-                }
-            }
+            iterateOverBoard(teamColor, goodPieces, goodPositions);
             //iterate over moves for my pieces
             for (int i=0;i<goodPieces.size();i++) {
                 ChessPiece goodGuy = goodPieces.get(i);
@@ -211,6 +202,19 @@ public class ChessGame {
         return false;
     }
 
+    private void iterateOverBoard(TeamColor teamColor, ArrayList<ChessPiece> goodPieces, ArrayList<ChessPosition> goodPositions) {
+        for (int row=1;row<9;row++) {
+            for (int col=1;col<9;col++) {
+                ChessPosition currentPosition = new ChessPosition(row, col);
+                ChessPiece currentPiece = board.getPiece(currentPosition);
+                if (currentPiece != null && currentPiece.getTeamColor() == teamColor) {
+                    goodPieces.add(currentPiece);
+                    goodPositions.add(currentPosition);
+                }
+            }
+        }
+    }
+
     /**
      * Determines if the given team is in stalemate, which here is defined as having
      * no valid moves
@@ -224,16 +228,7 @@ public class ChessGame {
         }
         ArrayList<ChessPiece> goodPieces = new ArrayList<>();
         ArrayList<ChessPosition> goodPositions = new ArrayList<>();
-        for (int row=1;row<9;row++) {
-            for (int col=1;col<9;col++) {
-                ChessPosition currentPosition = new ChessPosition(row, col);
-                ChessPiece currentPiece = board.getPiece(currentPosition);
-                if (currentPiece != null && currentPiece.getTeamColor() == teamColor) {
-                    goodPieces.add(currentPiece);
-                    goodPositions.add(currentPosition);
-                }
-            }
-        }
+        iterateOverBoard(teamColor, goodPieces, goodPositions);
         // iterate over the moves of my pieces
         Collection<ChessMove> goodMoves = new ArrayList<>();
         for (int i=0;i<goodPieces.size();i++) {

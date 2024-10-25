@@ -3,7 +3,6 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
-import model.AuthData;
 import service.AlreadyTakenException;
 import service.BadRequestException;
 import service.UnauthorizedException;
@@ -12,7 +11,6 @@ import spark.Request;
 import spark.Response;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 public class UserHandler {

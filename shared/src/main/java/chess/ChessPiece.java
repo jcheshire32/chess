@@ -68,23 +68,9 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         var validMoves = new ArrayList<ChessMove>();
         if (pieceType == ChessPiece.PieceType.KING) {
-            straightLine(board, myPosition, 1, 0, validMoves); //up
-            straightLine(board, myPosition, -1, 0, validMoves); //down
-            straightLine(board, myPosition, 0, 1, validMoves); //right
-            straightLine(board, myPosition, 0, -1, validMoves); //left
-            straightLine(board, myPosition, 1, 1, validMoves); //up right
-            straightLine(board, myPosition, 1, -1, validMoves); //up left
-            straightLine(board, myPosition, -1, 1, validMoves); //down right
-            straightLine(board, myPosition, -1, -1, validMoves); //down left
+            kingAndQueen(board, myPosition, validMoves);
         } else if (pieceType == ChessPiece.PieceType.QUEEN) {
-            straightLine(board, myPosition, 1, 0, validMoves); //up
-            straightLine(board, myPosition, -1, 0, validMoves); //down
-            straightLine(board, myPosition, 0, 1, validMoves); //right
-            straightLine(board, myPosition, 0, -1, validMoves); //left
-            straightLine(board, myPosition, 1, 1, validMoves); //up right
-            straightLine(board, myPosition, 1, -1, validMoves); //up left
-            straightLine(board, myPosition, -1, 1, validMoves); //down right
-            straightLine(board, myPosition, -1, -1, validMoves); //down left
+            kingAndQueen(board, myPosition, validMoves);
         } else if (pieceType == ChessPiece.PieceType.BISHOP) {
             straightLine(board, myPosition, 1, 1, validMoves); //up right
             straightLine(board, myPosition, 1, -1, validMoves); //up left
@@ -163,6 +149,18 @@ public class ChessPiece {
         }
         return validMoves;
     }
+
+    private void kingAndQueen(ChessBoard board, ChessPosition myPosition, ArrayList<ChessMove> validMoves) {
+        straightLine(board, myPosition, 1, 0, validMoves); //up
+        straightLine(board, myPosition, -1, 0, validMoves); //down
+        straightLine(board, myPosition, 0, 1, validMoves); //right
+        straightLine(board, myPosition, 0, -1, validMoves); //left
+        straightLine(board, myPosition, 1, 1, validMoves); //up right
+        straightLine(board, myPosition, 1, -1, validMoves); //up left
+        straightLine(board, myPosition, -1, 1, validMoves); //down right
+        straightLine(board, myPosition, -1, -1, validMoves); //down left
+    }
+
     //accepts the NEXT position, where the piece is trying to go to
     private boolean isInBounds(int row, int col){
         return row > 0 && row < 9 && col > 0 && col < 9;

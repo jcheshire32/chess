@@ -56,11 +56,11 @@ public class GameHandler {
     }
     public Object createGame(Request req, Response res){ //takes a JSON object and a nonJSON object
         var serializer = new Gson();
-        var CreateGameRequest = serializer.fromJson(req.body(), GameService.CreateGameRequest.class);
+        var createGameRequest = serializer.fromJson(req.body(), GameService.CreateGameRequest.class);
         GameService gameService = new GameService(authDAO, gameDAO);
         String authToken = req.headers("Authorization");
         try {
-            var createGameResult = gameService.createGame(authToken, CreateGameRequest.gameName()); //Double check with TA michael this line works
+            var createGameResult = gameService.createGame(authToken, createGameRequest.gameName()); //Double check with TA michael this line works
             return serializer.toJson(createGameResult);
         } catch (BadRequestException e) {
             Map<String, String> temp = new HashMap<>();
@@ -84,11 +84,11 @@ public class GameHandler {
     }
     public Object joinGame(Request req, Response res){
         var serializer = new Gson();
-        var JoinGameRequest = serializer.fromJson(req.body(), GameService.JoinGameRequest.class);
+        var joinGameRequest = serializer.fromJson(req.body(), GameService.JoinGameRequest.class);
         GameService gameService = new GameService(authDAO, gameDAO);
         String authToken = req.headers("Authorization");
         try {
-            var joinGameResult = gameService.joinGame(authToken, JoinGameRequest);
+            var joinGameResult = gameService.joinGame(authToken, joinGameRequest);
             return serializer.toJson(joinGameResult);
         } catch (BadRequestException e) {
             Map<String, String> temp = new HashMap<>();

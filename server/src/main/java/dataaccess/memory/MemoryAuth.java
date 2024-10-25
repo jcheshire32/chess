@@ -11,10 +11,10 @@ public class MemoryAuth implements AuthDAO {
     //authToken
     //username
     Map<String, String> authDataMap = new HashMap<>();
-    private static final MemoryAuth Instance = new MemoryAuth();
+    private static final MemoryAuth INSTANCE = new MemoryAuth();
 
     public static MemoryAuth getInstance() {
-        return Instance;
+        return INSTANCE;
     }
 
     public MemoryAuth() {

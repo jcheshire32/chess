@@ -9,10 +9,10 @@ import java.util.Map;
 
 public class MemoryUser implements UserDAO {
     Map<String, UserData> users = new HashMap<>();
-    private static final MemoryUser Instance = new MemoryUser();
+    private static final MemoryUser INSTANCE = new MemoryUser();
 
     public static MemoryUser getInstance() {
-        return Instance;
+        return INSTANCE;
     }
 
     public MemoryUser() {

@@ -13,10 +13,10 @@ public class MemoryGame implements GameDAO {
 
     private Map<Integer, GameData> games = new HashMap<Integer, GameData>();
 
-    private static final MemoryGame Instance = new MemoryGame();
+    private static final MemoryGame INSTANCE = new MemoryGame();
 
     public static MemoryGame getInstance() {
-        return Instance;
+        return INSTANCE;
     }
 
     @Override
