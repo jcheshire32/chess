@@ -29,8 +29,11 @@ public class ClearServiceTest {
 
     @Test
     @DisplayName("Clear Success")
-    public void testClear() throws DataAccessException, ServiceException, UnauthorizedException, BadRequestException, AlreadyTakenException, OtherException {
-        UserService.RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(new UserService.RegisterRequest("Jim", "Jim", "Jim"));
+    public void testClear() throws
+            DataAccessException, ServiceException, UnauthorizedException,
+            BadRequestException, AlreadyTakenException, OtherException {
+        UserService.RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(
+                new UserService.RegisterRequest("Jim", "Jim", "Jim"));
 
         gameService.createGame(registeredPerson.authToken(), "game1");
 

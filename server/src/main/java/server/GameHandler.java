@@ -1,17 +1,13 @@
 package server;
 
-import chess.ChessGame;
+
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
-import model.AuthData;
-import model.GameData;
 import service.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import spark.Response;
