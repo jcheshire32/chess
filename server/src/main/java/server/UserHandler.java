@@ -92,12 +92,8 @@ public class UserHandler {
             return serializer.toJson(logoutService.logout(authToken));
         } catch (UnauthorizedException e) {
             return getString401(res, e, serializer);
-        } catch (BadRequestException e) { //putting this 500 as bad req exception
-            Map<String, String> temp = new HashMap<>();
-            temp.put("message", e.getMessage());
-            res.status(500);
-            res.body(serializer.toJson(temp));
-            return res.body();
+        } catch (BadRequestException e) {
+            return getString500BadReq(res, e, serializer);
         }
     }
 
