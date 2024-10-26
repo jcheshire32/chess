@@ -1,8 +1,7 @@
 package server;
 
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
+import dataaccess.SQL.SQLAuth;
 import dataaccess.memory.MemoryAuth;
 import dataaccess.memory.MemoryGame;
 import dataaccess.memory.MemoryUser;
@@ -14,8 +13,22 @@ public class Server {
     private GameDAO gameDAO = new MemoryGame();
     private UserDAO userDAO = new MemoryUser();
 
+    public void createDatabase() throws DataAccessException {
+        DatabaseManager.createDatabase();
+    }
 
-    public int run(int desiredPort) {
+
+    public int run(int desiredPort) { //startup
+        try {
+            createDatabase();
+            //call table creation
+            authDAO = new SQLAuth();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e.getMessage()); //if database creation fails
+        }
+
+
+
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
