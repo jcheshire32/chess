@@ -34,6 +34,7 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
+    //passord hashing in register, and change comparison in login
     public RegisterResult register(RegisterRequest user) throws UnauthorizedException, BadRequestException, AlreadyTakenException {
         if (user.username == null || user.password == null || user.email == null) {
             throw new BadRequestException("Error: bad request");
@@ -41,6 +42,7 @@ public class UserService {
         UserData userData;
         //create user
         try{
+            //make hashed passord then pass in
             userData = new UserData(user.username(), user.password(), user.email());
             userDAO.createUser(userData);
         } catch (DataAccessException e) {
@@ -63,6 +65,7 @@ public class UserService {
         } catch (DataAccessException e) {
             throw new UnauthorizedException("Error: User not found"); //401
         }
+        //bcrypt instead of equals
         if (!userData.password().equals(user.password())) {
             throw new UnauthorizedException("Error: Wrong password"); //401
         }
