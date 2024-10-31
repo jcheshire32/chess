@@ -62,7 +62,6 @@ public class SQLAuth implements AuthDAO {
 
             preparedStatement.executeUpdate();
         }
-
     }
 
     void deleteAuth(Connection conn, String userName) throws SQLException {
@@ -72,14 +71,14 @@ public class SQLAuth implements AuthDAO {
         }
     }
 
-    void queryAuth(Connection conn, String findType, String authToken) throws SQLException { //petshop example just says findtype but
+    void queryAuth(Connection conn, String findType, String authToken) throws SQLException { //petshop example just says findtype but should I do the other vars?
         try (var preparedStatement = conn.prepareStatement("SELECT id, username, type FROM authTable WHERE id = ?")) { //not sure what to select
             preparedStatement.setString(1, findType);
-            try (var rs = preparedStatement.executeQuery()) {
-                while (rs.next()) {
-                    var id = rs.getInt("id");
-                    var userName = rs.getString("username");
-                    var type = rs.getString("type");
+            try (var resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    var id = resultSet.getInt("id");
+                    var userName = resultSet.getString("username");
+                    var type = resultSet.getString("type");
 
                     System.out.printf("id: %d, username: %s, type: %s%n", id, userName, type);
                 }

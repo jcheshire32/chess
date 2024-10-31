@@ -8,6 +8,7 @@ import model.AuthData;
 import model.UserData;
 import dataaccess.memory.MemoryUser;
 import dataaccess.memory.MemoryAuth;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.UUID;
 
@@ -29,12 +30,12 @@ public class UserService {
     private AuthDAO authDAO;
     private UserDAO userDAO;
 
+
     public UserService(AuthDAO authDAO, UserDAO userDAO){
         this.authDAO = authDAO;
         this.userDAO = userDAO;
     }
 
-    //passord hashing in register, and change comparison in login
     public RegisterResult register(RegisterRequest user) throws UnauthorizedException, BadRequestException, AlreadyTakenException {
         if (user.username == null || user.password == null || user.email == null) {
             throw new BadRequestException("Error: bad request");
@@ -43,7 +44,8 @@ public class UserService {
         //create user
         try{
             //make hashed passord then pass in
-            userData = new UserData(user.username(), user.password(), user.email());
+            String hashPassword = BCrypt.hashpw(user.password, BCrypt.gensalt());
+            userData = new UserData(user.username(), hashPassword, user.email());
             userDAO.createUser(userData);
         } catch (DataAccessException e) {
             throw new AlreadyTakenException("Error: already taken");
@@ -66,8 +68,8 @@ public class UserService {
             throw new UnauthorizedException("Error: User not found"); //401
         }
         //bcrypt instead of equals
-        if (!userData.password().equals(user.password())) {
-            throw new UnauthorizedException("Error: Wrong password"); //401
+        if (!BCrypt.checkpw(user.password, userData.password())){
+            throw new UnauthorizedException("Error: Wrong password"); //still 401
         }
         String authToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData(authToken,user.username);
