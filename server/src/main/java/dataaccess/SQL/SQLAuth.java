@@ -41,6 +41,8 @@ public class SQLAuth implements AuthDAO {
             preparedStatement.setString(2, authToken);
 
             preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            //handle
         }
     }
 
@@ -51,22 +53,24 @@ public class SQLAuth implements AuthDAO {
         }
     }
 
-    void queryAuth(Connection conn, String authToken) throws SQLException {
-        try (var preparedStatement = conn.prepareStatement("SELECT username, authToken FROM authTable WHERE authToken = ?")) { //not sure what to select
+    AuthData queryAuth(Connection conn, String authToken) throws SQLException {
+        try (var preparedStatement = conn.prepareStatement("SELECT username, authToken FROM authTable WHERE authToken = ?")) {
             preparedStatement.setString(1, authToken);
             try (var resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
+                if (resultSet.next()) {
                     var userName = resultSet.getString("username");
                     var authToken1 = resultSet.getString("authToken");
 
-                    System.out.printf("username: %s, authToken: %s",userName, authToken1);
+                    return new AuthData(authToken1, userName);
+                } else {
+                    return null;
                 }
-            }
+            } //catch??
         }
     }
 
     void clearAuth(Connection conn) throws SQLException {
-        try (var preparedStatement = conn.prepareStatement("TRUNCATE authTable")) {
+        try (var preparedStatement = conn.prepareStatement("TRUNCATE TABLE authTable")) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             //handle it
@@ -86,11 +90,15 @@ public class SQLAuth implements AuthDAO {
     @Override
     public String getAuth(String authToken) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()){
-            queryAuth(conn, authToken);
+            var auth = queryAuth(conn, authToken);
+            if (auth != null){
+                return auth.username();
+            } else {
+                return null;
+            }
         } catch (SQLException e) {
             throw new DataAccessException("Error: bad request");
         }
-        //what to return? new MemoryAuth().getAuth(authToken)?
     }
 
     @Override
@@ -104,6 +112,10 @@ public class SQLAuth implements AuthDAO {
 
     @Override
     public void clear() throws DataAccessException {
-        //call clear auth
+        try (var conn = DatabaseManager.getConnection()){
+            clearAuth(conn);
+        } catch (SQLException e) {
+            //handle
+        }
     }
 }

@@ -40,26 +40,12 @@ public class SQLUser implements UserDAO {
             preparedStatement.setString(3, email);
             preparedStatement.executeUpdate();
 
-        } // catch the exception?
-    }
-
-    void udpateUser(Connection conn, String userName, String password, String email) throws DataAccessException, SQLException {
-        try (var preparedStatement = conn.prepareStatement("DELETE FROM userTable WHERE id = ?")) {
-            preparedStatement.setString(1, userName);
-            preparedStatement.setString(2, password);
-            preparedStatement.setString(3, email);
-            preparedStatement.executeUpdate();
-        } // what catch to handle?
-    }
-
-    void deleteUser(Connection conn, String userName) throws DataAccessException, SQLException {
-        try (var preparedStatement = conn.prepareStatement("DELETE FROM userTable WHERE userName = ?")) {
-            preparedStatement.setString(1, userName);
-            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            //handle
         }
     }
 
-    void queryUser(Connection conn, String userName) throws DataAccessException, SQLException {//not sure what params
+    UserData queryUser(Connection conn, String userName) throws DataAccessException, SQLException {//not sure what params
         try (var preparedStatement = conn.prepareStatement("SELECT userName, password, email FROM userTable WHERE userName = ?")) {
             preparedStatement.setString(1, userName);
             try (var resultSet = preparedStatement.executeQuery()) {
@@ -68,21 +54,50 @@ public class SQLUser implements UserDAO {
                     var password = resultSet.getString("password");
                     var email = resultSet.getString("email");
 
-
-                    System.out.printf("username: %s, password: %s, email: %s", username, password, email);
+                    return new UserData(username, password, email);
+                } else {
+                    return null;
                 }
-            }
+            }//catch?
+        }
+    }
+
+    void deleteUser(Connection conn, String userName) throws DataAccessException, SQLException {
+        try (var preparedStatement = conn.prepareStatement("DELETE FROM userTable WHERE userName = ?")) {
+            preparedStatement.setString(1, userName);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            //handle
+        }
+    }
+
+    //clear and delete are different though,
+
+    void clearUser(Connection conn, String userName) throws DataAccessException, SQLException {
+        try (var preparedStatement = conn.prepareStatement("TRUNCATE TABLE userTable")) {
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            //handle
+        }
+    }
+
+    @Override
+    public void createUser(UserData userData) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()){
+            insertUser(conn, userData.username(), userData.password(), userData.email());
+        } catch (SQLException e) {
+            //handle
         }
     }
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()){
+            return queryUser(conn, username); // simplified from IJ
+        } catch (SQLException e) {
+            //handle
+        }
         return null;
-    }
-
-    @Override
-    public void createUser(UserData userData) throws DataAccessException {
-
     }
 
     @Override

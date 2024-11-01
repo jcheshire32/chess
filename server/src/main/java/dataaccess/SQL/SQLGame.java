@@ -1,5 +1,7 @@
 package dataaccess.SQL;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
 import dataaccess.GameDAO;
@@ -10,6 +12,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
+import static java.sql.Types.NULL;
 
 public class SQLGame implements GameDAO {
 
@@ -18,12 +21,15 @@ public class SQLGame implements GameDAO {
         try (var conn = DatabaseManager.getConnection()) {
             var createDbStatement = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS chess_db");
             createDbStatement.execute();
+            //FIX LAST TABLE VAR
             var createGameTable = """
             CREATE TABLE IF NOT EXISTS gameTable (
-                id INT NOT NULL AUTO_INCREMENT,
-                name VARCHAR(255) NOT NULL,
-                type VARCHAR(255) NOT NULL,
-                PRIMARY KEY (id)
+                gameID INT NOT NULL AUTO_INCREMENT,
+                whiteUsername VARCHAR(255) DEFAULT NULL,
+                blackUsername VARCHAR(255) DEFAULT NULL,
+                gameName VARCHAR(255) NOT NULL,
+                game TEXT NOT NULL,
+                PRIMARY KEY (gameID)
             )""";
             try (var createTableStatement = conn.prepareStatement(createGameTable)){
                 createTableStatement.execute();
@@ -34,24 +40,10 @@ public class SQLGame implements GameDAO {
     }
 
     int insertGame(
-            Connection conn, int gameID, String whiteUserName, String blackUserName, String gameName, String game
-            ) throws SQLException { //is game a string or JSON?
-        try (var preparedStatement = conn.prepareStatement("INSERT INTO gameTable (gameID, whiteUserName, blackUserName, gameName, game) VALUES(?, ?, ?, ?, ?)", RETURN_GENERATED_KEYS)) {
-            preparedStatement.setInt(1, gameID);
-            preparedStatement.setString(2, whiteUserName);
-            preparedStatement.setString(3, blackUserName);
-            preparedStatement.setString(4, gameName);
-            preparedStatement.setString(5, game);
-            preparedStatement.execute();
-
-            var resultSet = preparedStatement.getGeneratedKeys();
-            var ID = 0;
-            if (resultSet.next()) {
-                ID = resultSet.getInt(1); //keep this stuff?
-            }
-
-            return ID;
-        }
+        Connection conn, String whiteUserName, String blackUserName, String gameName, String game
+        ) throws SQLException, DataAccessException { //is game a string or JSON?
+        var statement = "INSERT INTO gameTable (whiteUserName, blackUserName, gameName, game) VALUES(?, ?, ?, ?)";
+        return executeUpdate(statement, whiteUserName, blackUserName, gameName, game);//aka gameID
     }
 
     void updateGame(Connection conn, int gameID, String whiteUserName, String blackUserName, String gameName, String game) throws SQLException {
@@ -62,37 +54,78 @@ public class SQLGame implements GameDAO {
             preparedStatement.setString(4, gameName);
             preparedStatement.setString(5, game);
             preparedStatement.execute();
+        } catch (SQLException e) {
+            //handle
         }
     }
 
     void deleteGame(Connection conn, int gameID) throws SQLException { // I don't think this one should be userName
-        try (var preparedStatement = conn.prepareStatement("DELETE FROM gameTable WHERE id = ?")) {
+        try (var preparedStatement = conn.prepareStatement("DELETE FROM gameTable WHERE gameID = ?")) {
             preparedStatement.setInt(1, gameID);
             preparedStatement.execute();
+        } catch (SQLException e) {
+            //handle
         }
     }
 
-    void queryGame(Connection conn, String findType, int gameID) throws SQLException {//gameID vs userName
-        try (var preparedStatement = conn.prepareStatement("SELECT idkwhattoputhereanymore FROM gameTable WHERE gameID = ?")) {//fix
+    GameData queryGame(Connection conn, int gameID) throws SQLException {//gameID vs userName
+        try (var preparedStatement = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, game FROM gameTable WHERE gameID = ?")) {
             preparedStatement.setInt(1, gameID);
             try (var resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    //idk here either i feel like it can't be the same as before
-
-                    //system.out.printf(asdfasdf); only for troubleshooting
+                if (resultSet.next()) {
+                    var gameIDxtra = resultSet.getInt("gameID");
+                    var whiteUserName = resultSet.getString("whiteUsername");
+                    var blackUserName = resultSet.getString("blackUsername");
+                    var gameName = resultSet.getString("gameName");
+                    var game = resultSet.getObject("game", ChessGame.class);
+                    return new GameData(gameIDxtra,whiteUserName,blackUserName,gameName,game);
+                } else {
+                    return null;
                 }
             }
         }
     }
 
+    private int executeUpdate(String statement, Object... params) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                for (var i = 0; i < params.length; i++) {
+                    var param = params[i];
+                    if (param instanceof String p) ps.setString(i + 1, p);
+                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
+                    else if (param instanceof ChessGame p) ps.setString(i + 1, p.toString());
+                    else if (param == null) ps.setNull(i + 1, NULL);
+                }
+                ps.executeUpdate();
+
+                var rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+
+                return 0;
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error: IDK");
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     @Override
-    public List<GameData> getGames() throws DataAccessException {
+    public List<GameData> getGames() throws DataAccessException { //Maybe GameData instead?
         return List.of();
     }
 
     @Override
     public void createGame(GameData game) throws DataAccessException {
-
+        var serializer = new Gson();
+        try (var conn = DatabaseManager.getConnection()){
+            insertGame(conn, game.whiteUsername(), game.blackUsername(), game.gameName(), serializer.toJson(game.game()));
+        } catch (SQLException e) {
+            //handle
+        }
     }
 
     @Override
