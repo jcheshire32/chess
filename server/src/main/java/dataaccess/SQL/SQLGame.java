@@ -79,7 +79,7 @@ public class SQLGame implements GameDAO {
                 while (resultSet.next()) {
                     //idk here either i feel like it can't be the same as before
 
-                    //system.out.printf(asdfasdf);
+                    //system.out.printf(asdfasdf); only for troubleshooting
                 }
             }
         }

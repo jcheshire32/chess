@@ -20,10 +20,10 @@ public class SQLUser implements UserDAO {
             //Is this the same for all of them? vvv
             var createUserTable = """
             CREATE TABLE IF NOT EXISTS userTable (
-                id INT NOT NULL AUTO_INCREMENT,
-                name VARCHAR(255) NOT NULL,
-                type VARCHAR(255) NOT NULL,
-                PRIMARY KEY (id)
+                userName VARCHAR(255) NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                PRIMARY KEY (userName)
             )""";
             try (var createTableStatement = conn.prepareStatement(createUserTable)) {
                 createTableStatement.execute();
@@ -33,21 +33,14 @@ public class SQLUser implements UserDAO {
         }
     }
 
-    int insertUser(Connection conn, String userName, String password, String email) throws DataAccessException, SQLException {
-        try (var preparedStatement = conn.prepareStatement("INSERT INTO userTable (userName, password, email) VALUES(?, ?, ?)", RETURN_GENERATED_KEYS)) {
+    void insertUser(Connection conn, String userName, String password, String email) throws DataAccessException, SQLException {
+        try (var preparedStatement = conn.prepareStatement("INSERT INTO userTable (userName, password, email) VALUES(?, ?, ?)")) {
             preparedStatement.setString(1, userName);
             preparedStatement.setString(2, password);
             preparedStatement.setString(3, email);
             preparedStatement.executeUpdate();
 
-            var resultSet = preparedStatement.getGeneratedKeys();
-            var ID = 10;
-            if (resultSet.next()) {
-                ID = resultSet.getInt(1);
-            }
-            return ID;
         } // catch the exception?
-        //if I catch exception, return something?
     }
 
     void udpateUser(Connection conn, String userName, String password, String email) throws DataAccessException, SQLException {
@@ -60,22 +53,23 @@ public class SQLUser implements UserDAO {
     }
 
     void deleteUser(Connection conn, String userName) throws DataAccessException, SQLException {
-        try (var preparedStatement = conn.prepareStatement("DELETE FROM userTable WHERE id = ?")) {
+        try (var preparedStatement = conn.prepareStatement("DELETE FROM userTable WHERE userName = ?")) {
             preparedStatement.setString(1, userName);
             preparedStatement.executeUpdate();
         }
     }
 
-    void queryUser(Connection conn, String findType, String userName) throws DataAccessException, SQLException {//not sure what params
-        try (var preparedStatement = conn.prepareStatement("SELECT id, username, type FROM userTable WHERE id = ?")) {
+    void queryUser(Connection conn, String userName) throws DataAccessException, SQLException {//not sure what params
+        try (var preparedStatement = conn.prepareStatement("SELECT userName, password, email FROM userTable WHERE userName = ?")) {
             preparedStatement.setString(1, userName);
             try (var resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    var id = resultSet.getInt("id");
                     var username = resultSet.getString("username");
-                    var type = resultSet.getString("type");
+                    var password = resultSet.getString("password");
+                    var email = resultSet.getString("email");
 
-                    System.out.printf("id: %d, username: %s, type: %s%n", id, username, type);
+
+                    System.out.printf("username: %s, password: %s, email: %s", username, password, email);
                 }
             }
         }
