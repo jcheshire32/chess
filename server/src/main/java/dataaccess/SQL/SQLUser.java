@@ -17,7 +17,6 @@ public class SQLUser implements UserDAO {
         try (var conn = DatabaseManager.getConnection()) {
             var createDbStatement = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS chess_db");
             createDbStatement.execute();
-            //Is this the same for all of them? vvv
             var createUserTable = """
             CREATE TABLE IF NOT EXISTS userTable (
                 userName VARCHAR(255) NOT NULL,
@@ -37,7 +36,6 @@ public class SQLUser implements UserDAO {
             preparedStatement.setString(2, password);
             preparedStatement.setString(3, email);
             preparedStatement.executeUpdate();
-
         }
     }
 
@@ -82,6 +80,7 @@ public class SQLUser implements UserDAO {
         }
     }
 
+    //Need clear to work to make the first one work
     @Override
     public void clear() throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()){
