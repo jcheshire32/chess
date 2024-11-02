@@ -64,10 +64,10 @@ public class SQLGameTests {
     @DisplayName("Find Game Success")
     public void testFindGame() throws DataAccessException {
         ChessGame chessGame = new ChessGame();
-        GameData gameData = new GameData(3, "steve", "John", "idk", chessGame);
+        GameData gameData = new GameData(2, "steve", "Phil", "idk", chessGame);
         sqlGame.createGame(gameData);
-        GameData this_game = sqlGame.findGame(3);
-        Assertions.assertNotNull(this_game);
+        GameData thisGame = sqlGame.findGame(2);
+        Assertions.assertNotNull(thisGame);
 
     }
 
@@ -75,7 +75,7 @@ public class SQLGameTests {
     @DisplayName("Find Game Fail")
     public void testFindGameFail() throws DataAccessException {
         ChessGame chessGame = new ChessGame();
-        GameData gameData = new GameData(3, "steve", "John", "idk", chessGame);
+        GameData gameData = new GameData(3, "Pete", "John", "bruh", chessGame);
         sqlGame.createGame(gameData);
         GameData this_game = sqlGame.findGame(3);
         Assertions.assertNotNull(this_game);
