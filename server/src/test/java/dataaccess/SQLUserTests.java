@@ -49,6 +49,7 @@ public class SQLUserTests {
         Assertions.assertThrows(DataAccessException.class, () -> sqlUser.getUser(null));
     }
 
+
     @Test
     @DisplayName("Clear Success")
     public void clearSuccess() throws DataAccessException {
