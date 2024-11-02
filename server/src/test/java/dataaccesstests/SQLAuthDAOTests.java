@@ -5,7 +5,7 @@ import dataaccess.sql.SQLAuth;
 import model.AuthData;
 import org.junit.jupiter.api.*;
 
-public class SQLAuthTests {
+public class SQLAuthDAOTests {
 
     private SQLAuth sqlAuth;
 

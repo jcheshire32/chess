@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
-public class SQLGameTests {
+public class SQLGameDAOTests {
 
     private SQLGame sqlGame;
 
