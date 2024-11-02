@@ -77,8 +77,8 @@ public class SQLGameTests {
         ChessGame chessGame = new ChessGame();
         GameData gameData = new GameData(3, "Pete", "John", "bruh", chessGame);
         sqlGame.createGame(gameData);
-        GameData this_game = sqlGame.findGame(3);
-        Assertions.assertNotNull(this_game);
+        GameData thisGame = sqlGame.findGame(3);
+        Assertions.assertNotNull(thisGame);
     }
 
     @Test
