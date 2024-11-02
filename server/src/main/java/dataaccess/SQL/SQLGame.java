@@ -39,7 +39,9 @@ public class SQLGame implements GameDAO {
     void insertGame(
         Connection conn, int gameID, String whiteUserName, String blackUserName, String gameName, String game
         ) throws SQLException {
-        try (var preparedStatement = conn.prepareStatement("INSERT INTO gameTable (gameID, whiteUserName, blackUserName, gameName, game) VALUES(?, ?, ?, ?, ?)")){
+        try (var preparedStatement = conn.prepareStatement(
+                "INSERT INTO gameTable (gameID, whiteUserName, blackUserName, gameName, game) VALUES(?, ?, ?, ?, ?)"
+        )){
             preparedStatement.setInt(1, gameID);
             preparedStatement.setString(2, whiteUserName);
             preparedStatement.setString(3, blackUserName);
@@ -49,8 +51,12 @@ public class SQLGame implements GameDAO {
         }
     }
 
-    void updateGame(Connection conn, int gameID, String whiteUserName, String blackUserName, String gameName, String game) throws SQLException {
-        try (var preparedStatement = conn.prepareStatement("UPDATE gameTable SET whiteUserName = ?, blackUserName = ?, gameName = ?, game = ? WHERE gameID = ?")) {
+    void updateGame(
+            Connection conn, int gameID, String whiteUserName, String blackUserName, String gameName, String game
+    ) throws SQLException {
+        try (var preparedStatement = conn.prepareStatement(
+                "UPDATE gameTable SET whiteUserName = ?, blackUserName = ?, gameName = ?, game = ? WHERE gameID = ?"
+        )) {
             preparedStatement.setString(1, whiteUserName);
             preparedStatement.setString(2, blackUserName);
             preparedStatement.setString(3, gameName);
@@ -61,7 +67,8 @@ public class SQLGame implements GameDAO {
     }
 
     GameData queryGame(Connection conn, int gameID) throws SQLException {//gameID vs userName
-        try (var preparedStatement = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, game FROM gameTable WHERE gameID = ?")) {
+        try (var preparedStatement = conn.prepareStatement(
+                "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM gameTable WHERE gameID = ?")) {
             preparedStatement.setInt(1, gameID);
             try (var resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
@@ -71,7 +78,8 @@ public class SQLGame implements GameDAO {
                     var blackUserName = resultSet.getString("blackUsername");
                     var gameName = resultSet.getString("gameName");
                     var game = resultSet.getString("game");
-                    return new GameData(gameIDxtra,whiteUserName,blackUserName,gameName,serializer.fromJson(game, ChessGame.class));
+                    return new GameData(
+                            gameIDxtra,whiteUserName,blackUserName,gameName,serializer.fromJson(game, ChessGame.class));
                 } else {
                     return null;
                 }
@@ -112,7 +120,9 @@ public class SQLGame implements GameDAO {
     public void createGame(GameData game) throws DataAccessException {
         var serializer = new Gson();
         try (var conn = DatabaseManager.getConnection()){
-            insertGame(conn, game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), serializer.toJson(game.game()));
+            insertGame(
+                    conn, game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(),
+                    serializer.toJson(game.game()));
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
@@ -131,7 +141,8 @@ public class SQLGame implements GameDAO {
     public void updateGame(GameData gameData) throws DataAccessException {
         var serializer = new Gson();
         try (var conn = DatabaseManager.getConnection()){
-            updateGame(conn, gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), serializer.toJson(gameData.game()));
+            updateGame(conn, gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(),
+                    gameData.gameName(), serializer.toJson(gameData.game()));
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }

@@ -1,6 +1,9 @@
 package dataaccess;
 
+import chess.ChessGame;
 import dataaccess.SQL.SQLGame;
+import model.GameData;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,48 +17,79 @@ public class SQLGameTests {
     @BeforeEach
     public void setUp() throws SQLException, DataAccessException {
         sqlGame = new SQLGame();
+        sqlGame.clear();
     }
 
     @Test
     @DisplayName("Get Games Success")
-    public void testGetGames() {
-
+    public void testGetGames() throws DataAccessException {
+        ChessGame chessGame = new ChessGame();
+        GameData gameData = new GameData(3, "Jim", "John", "dagame", chessGame);
+        sqlGame.createGame(gameData);
+        var games = sqlGame.getGames();
+        Assertions.assertNotNull(games);
+        Assertions.assertTrue(!games.isEmpty());
     }
 
     @Test
     @DisplayName("Get Games Fail")
-    public void testGetGamesFail() {
-
+    public void testGetGamesFail() throws DataAccessException {
+        ChessGame chessGame = new ChessGame();
+        GameData gameData = new GameData(3, "steve", "John", "idk", chessGame);
+        sqlGame.createGame(gameData);
+        var games = sqlGame.getGames();
+        Assertions.assertNotNull(games);
     }
 
     @Test
     @DisplayName("Create Game Success")
-    public void testCreateGame() {
-
+    public void testCreateGame() throws DataAccessException {
+        ChessGame chessGame = new ChessGame();
+        GameData gameData = new GameData(3, "steve", "John", "idk", chessGame);
+        sqlGame.createGame(gameData);
+        Assertions.assertNotNull(sqlGame.getGames());
     }
 
     @Test
     @DisplayName("Create Game Fail")
-    public void testCreateGameFail() {
-
+    public void testCreateGameFail() throws DataAccessException {
+        ChessGame chessGame = new ChessGame();
+        GameData gameData = new GameData(2, "Jim", "John", "dagame", chessGame);
+        GameData gameData2 = new GameData(2, "Jim", "John", "dagame", chessGame);
+        sqlGame.createGame(gameData);
+        Assertions.assertThrows(DataAccessException.class, () -> sqlGame.createGame(gameData2));
     }
 
     @Test
     @DisplayName("Find Game Success")
-    public void testFindGame() {
+    public void testFindGame() throws DataAccessException {
+        ChessGame chessGame = new ChessGame();
+        GameData gameData = new GameData(3, "steve", "John", "idk", chessGame);
+        sqlGame.createGame(gameData);
+        GameData this_game = sqlGame.findGame(3);
+        Assertions.assertNotNull(this_game);
 
     }
 
     @Test
     @DisplayName("Find Game Fail")
-    public void testFindGameFail() {
-
+    public void testFindGameFail() throws DataAccessException {
+        ChessGame chessGame = new ChessGame();
+        GameData gameData = new GameData(3, "steve", "John", "idk", chessGame);
+        sqlGame.createGame(gameData);
+        GameData this_game = sqlGame.findGame(3);
+        Assertions.assertNotNull(this_game);
     }
 
     @Test
     @DisplayName("Clear Game Success")
-    public void testClearGame() {
-
+    public void testClearGame() throws DataAccessException {
+        ChessGame chessGame = new ChessGame();
+        GameData gameData = new GameData(3, "steve", "John", "idk", chessGame);
+        sqlGame.createGame(gameData);
+        sqlGame.clear();
+        var games = sqlGame.getGames();
+        Assertions.assertTrue(games.isEmpty());
     }
 
 }

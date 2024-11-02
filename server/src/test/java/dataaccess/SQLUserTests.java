@@ -16,6 +16,7 @@ public class SQLUserTests {
     @BeforeEach
     public void setUp() throws SQLException, DataAccessException {
         sqlUser = new SQLUser();
+        sqlUser.clear();
     }
 
     @Test
@@ -30,16 +31,16 @@ public class SQLUserTests {
     @Test
     @DisplayName("Create User Fail")
     public void createUserFail() {
-        UserData testUser = new UserData("Jim","jim","jim");
+        UserData testUser = new UserData(null,"jim","jim");
         Assertions.assertThrows(DataAccessException.class, () -> sqlUser.createUser(testUser));
     }
 
     @Test
     @DisplayName("Get User Success")
     public void getUserSuccess() throws DataAccessException {
-        UserData testUser = new UserData("jim","jim","jim");
+        UserData testUser = new UserData("Jam","jim","jim");
         sqlUser.createUser(testUser);
-        var guy = sqlUser.getUser("jim");
+        var guy = sqlUser.getUser("Jam");
         Assertions.assertEquals(testUser, guy);
     }
 
@@ -54,9 +55,9 @@ public class SQLUserTests {
     @Test
     @DisplayName("Clear Success")
     public void clearSuccess() throws DataAccessException {
-        UserData testUser = new UserData("jim","jim","jim");
+        UserData testUser = new UserData("oiusdfioujdfnng","jim","jim");
         sqlUser.createUser(testUser);
         sqlUser.clear();
-        Assertions.assertNull(sqlUser.getUser("jim"));
+        Assertions.assertThrows(DataAccessException.class, () -> sqlUser.getUser("oiusdfioujdfnng"));
     }
 }

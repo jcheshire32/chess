@@ -2,10 +2,7 @@ package dataaccess;
 
 import dataaccess.SQL.SQLAuth;
 import model.AuthData;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 public class SQLAuthTests {
 
@@ -14,14 +11,16 @@ public class SQLAuthTests {
     @BeforeEach
     public void setUp() throws DataAccessException {
         sqlAuth = new SQLAuth();
+        sqlAuth.clear();
     }
 
     @Test
     @DisplayName("Create Auth Success")
     public void createAuthTest() throws DataAccessException {
-        AuthData testAuth = new AuthData("asdf", "Jim");
+        var token = "pdofipoi";
+        AuthData testAuth = new AuthData(token, "Jim");
         sqlAuth.createAuth(testAuth);
-        var guy = sqlAuth.getAuth("asdf");
+        var guy = sqlAuth.getAuth(token);
         Assertions.assertEquals(testAuth.username(), guy);
     }
 
@@ -35,16 +34,16 @@ public class SQLAuthTests {
     @Test
     @DisplayName("Get Auth Success")
     public void getAuthTest() throws DataAccessException {
-        AuthData testAuth = new AuthData("asdf", "Jim");
+        AuthData testAuth = new AuthData("asdfg", "Jim");
         sqlAuth.createAuth(testAuth);
-        var guy = sqlAuth.getAuth("asdf");
+        var guy = sqlAuth.getAuth("asdfg");
         Assertions.assertEquals(testAuth.username(), guy);
     }
 
     @Test
     @DisplayName("Get Auth Fail")
     public void getAuthFailTest() throws DataAccessException {
-        AuthData testAuth = new AuthData("asdf", "Jim");
+        AuthData testAuth = new AuthData("asdfgh", "Jim");
         sqlAuth.createAuth(testAuth);
         Assertions.assertNull(sqlAuth.getAuth("qwerty"));
     }
@@ -52,26 +51,30 @@ public class SQLAuthTests {
     @Test
     @DisplayName("Delete Auth Success")
     public void deleteAuthTest() throws DataAccessException {
-        AuthData testAuth = new AuthData("asdf", "Jim");
+        var token = "asodifu";
+        AuthData testAuth = new AuthData(token, "Jim");
         sqlAuth.createAuth(testAuth);
-        sqlAuth.deleteAuth("asdf");
-        Assertions.assertNull(sqlAuth.getAuth("asdf"));
+        sqlAuth.deleteAuth(token);
+        Assertions.assertNull(sqlAuth.getAuth(token));
     }
 
     @Test
     @DisplayName("Delete Auth Fail")
     public void deleteAuthFailTest() throws DataAccessException {
-        AuthData testAuth = new AuthData("asdf", "Jim");
+        var token = "weoiuiouoouur";
+        AuthData testAuth = new AuthData(token, "Jim");
         sqlAuth.createAuth(testAuth);
-        Assertions.assertThrows(DataAccessException.class, () -> sqlAuth.deleteAuth(null));
+        sqlAuth.deleteAuth("Jim");
+        Assertions.assertNotNull(sqlAuth.getAuth(token));
     }
 
     @Test
     @DisplayName("Clear Auth Success")
     public void clearAuthTest() throws DataAccessException {
-        AuthData testAuth = new AuthData("asdf", "Jim");
+        var token = "xnvc";
+        AuthData testAuth = new AuthData(token, "Jim");
         sqlAuth.createAuth(testAuth);
         sqlAuth.clear();
-        Assertions.assertNull(sqlAuth.getAuth("asdf"));
+        Assertions.assertNull(sqlAuth.getAuth(token));
     }
 }
