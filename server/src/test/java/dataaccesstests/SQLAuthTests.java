@@ -1,7 +1,7 @@
 package dataaccesstests;
 
 import dataaccess.DataAccessException;
-import dataaccess.SQL.SQLAuth;
+import dataaccess.sql.SQLAuth;
 import model.AuthData;
 import org.junit.jupiter.api.*;
 

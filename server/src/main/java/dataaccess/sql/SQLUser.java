@@ -1,4 +1,4 @@
-package dataaccess.SQL;
+package dataaccess.sql;
 
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
@@ -7,8 +7,6 @@ import model.UserData;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class SQLUser implements UserDAO {
 

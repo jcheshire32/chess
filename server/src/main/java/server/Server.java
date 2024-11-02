@@ -1,9 +1,9 @@
 package server;
 
 import dataaccess.*;
-import dataaccess.SQL.SQLAuth;
-import dataaccess.SQL.SQLGame;
-import dataaccess.SQL.SQLUser;
+import dataaccess.sql.SQLAuth;
+import dataaccess.sql.SQLGame;
+import dataaccess.sql.SQLUser;
 import dataaccess.memory.MemoryAuth;
 import dataaccess.memory.MemoryGame;
 import dataaccess.memory.MemoryUser;
