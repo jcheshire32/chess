@@ -43,6 +43,7 @@ public class SQLUserTests {
         Assertions.assertEquals(testUser, guy);
     }
 
+
     @Test
     @DisplayName("Get User Fail")
     public void getUserFail() {
