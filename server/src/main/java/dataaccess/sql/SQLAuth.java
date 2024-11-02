@@ -14,8 +14,6 @@ public class SQLAuth implements AuthDAO {
     public SQLAuth() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
-            var createDbStatement = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS chess_db");
-            createDbStatement.execute();
             var createAuthTable = """
             CREATE TABLE IF NOT EXISTS authTable (
                 username VARCHAR(255) NOT NULL,

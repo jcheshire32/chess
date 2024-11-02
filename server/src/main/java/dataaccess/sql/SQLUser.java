@@ -13,8 +13,6 @@ public class SQLUser implements UserDAO {
     public SQLUser() throws DataAccessException, SQLException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
-            var createDbStatement = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS chess_db");
-            createDbStatement.execute();
             var createUserTable = """
             CREATE TABLE IF NOT EXISTS userTable (
                 userName VARCHAR(255) NOT NULL,
