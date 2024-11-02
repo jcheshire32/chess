@@ -32,11 +32,11 @@ public class GameHandler {
             var listGamesResult = gameService.listGames(authToken);
             return serializer.toJson(listGamesResult);
         } catch (UnauthorizedException e) {
-            return getString401(res,e,serializer);
+            return UserHandler.getString401(res,e,serializer);
         } catch (BadRequestException e) {
-            return getString400(res,e,serializer);
+            return UserHandler.getString400(res,e,serializer);
         } catch (DataAccessException e) {
-            return getString500(res,e,serializer);
+            return UserHandler.getString500(res,e,serializer);
         }
     }
     public Object createGame(Request req, Response res){ //takes a JSON object and a nonJSON object
@@ -48,9 +48,9 @@ public class GameHandler {
             var createGameResult = gameService.createGame(authToken, createGameRequest.gameName()); //Double check with TA michael this line works
             return serializer.toJson(createGameResult);
         } catch (BadRequestException e) {
-            return getString400(res,e,serializer);
+            return UserHandler.getString400(res,e,serializer);
         } catch (UnauthorizedException e){
-            return getString401(res,e,serializer);
+            return UserHandler.getString401(res,e,serializer);
         } catch (ServiceException e){
             return getString500serv(res,e,serializer);
         }
@@ -64,45 +64,14 @@ public class GameHandler {
             var joinGameResult = gameService.joinGame(authToken, joinGameRequest);
             return serializer.toJson(joinGameResult);
         } catch (BadRequestException e) {
-            return getString400(res,e,serializer);
+            return UserHandler.getString400(res,e,serializer);
         } catch (UnauthorizedException e) {
-            return getString401(res,e,serializer);
+            return UserHandler.getString401(res,e,serializer);
         } catch (AlreadyTakenException e){
-            return getString403(res,e,serializer);
+            return UserHandler.getString403(res,e,serializer);
         } catch (DataAccessException e) {
-            return getString500(res, e, serializer);
+            return UserHandler.getString500(res, e, serializer);
         }
-    }
-    private static String getString400(Response res, BadRequestException e, Gson serializer) {
-        Map<String, Object> temp = new HashMap<>();
-        temp.put("message", e.getMessage());
-        res.status(400);
-        res.body(serializer.toJson(temp));
-        return res.body();
-    }
-
-    private static String getString401(Response res, UnauthorizedException e, Gson serializer) {
-        Map<String, String> temp = new HashMap<>();
-        temp.put("message", e.getMessage());
-        res.status(401);
-        res.body(serializer.toJson(temp));
-        return res.body();
-    }
-
-    private static String getString403(Response res, AlreadyTakenException e, Gson serializer) {
-        Map<String, Object> temp = new HashMap<>();
-        temp.put("message", e.getMessage());
-        res.status(403);
-        res.body(serializer.toJson(temp));
-        return res.body();
-    }
-
-    private static String getString500(Response res, DataAccessException e, Gson serializer) {
-        Map<String, String> temp = new HashMap<>();
-        temp.put("message", e.getMessage());
-        res.status(500);
-        res.body(serializer.toJson(temp));
-        return res.body();
     }
 
     private static String getString500serv(Response res, ServiceException e, Gson serializer) {

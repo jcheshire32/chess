@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import service.AlreadyTakenException;
 import service.BadRequestException;
@@ -33,11 +34,19 @@ public class UserHandler {
         } catch (AlreadyTakenException e){
             return getString403(res, e, serializer);
         } catch (UnauthorizedException e) {
-            return getString500(res, e, serializer);
+            return getString500unauth(res, e, serializer);
         }
     }
 
-    private static String getString400(Response res, BadRequestException e, Gson serializer) {
+    static String getString500unauth(Response res, UnauthorizedException e, Gson serializer) {
+        Map<String, String> temp = new HashMap<>();
+        temp.put("message", e.getMessage());
+        res.status(500);
+        res.body(serializer.toJson(temp));
+        return res.body();
+    }
+
+    static String getString400(Response res, BadRequestException e, Gson serializer) {
         Map<String, Object> temp = new HashMap<>();
         temp.put("message", e.getMessage());
         res.status(400);
@@ -45,7 +54,7 @@ public class UserHandler {
         return res.body();
     }
 
-    private static String getString401(Response res, UnauthorizedException e, Gson serializer) {
+    static String getString401(Response res, UnauthorizedException e, Gson serializer) {
         Map<String, String> temp = new HashMap<>();
         temp.put("message", e.getMessage());
         res.status(401);
@@ -53,7 +62,7 @@ public class UserHandler {
         return res.body();
     }
 
-    private static String getString403(Response res, AlreadyTakenException e, Gson serializer) {
+    static String getString403(Response res, AlreadyTakenException e, Gson serializer) {
         Map<String, Object> temp = new HashMap<>();
         temp.put("message", e.getMessage());
         res.status(403);
@@ -61,7 +70,7 @@ public class UserHandler {
         return res.body();
     }
 
-    private static String getString500(Response res, UnauthorizedException e, Gson serializer) {
+    static String getString500(Response res, DataAccessException e, Gson serializer) {
         Map<String, String> temp = new HashMap<>();
         temp.put("message", e.getMessage());
         res.status(500);
