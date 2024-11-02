@@ -1,5 +1,6 @@
-package dataaccess;
+package dataaccesstests;
 
+import dataaccess.DataAccessException;
 import dataaccess.SQL.SQLUser;
 import model.UserData;
 import org.junit.jupiter.api.Assertions;

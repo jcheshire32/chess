@@ -1,6 +1,7 @@
-package dataaccess;
+package dataaccesstests;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import dataaccess.SQL.SQLGame;
 import model.GameData;
 import org.junit.jupiter.api.Assertions;
@@ -52,7 +53,7 @@ public class SQLGameTests {
 
     @Test
     @DisplayName("Create Game Fail")
-    public void testCreateGameFail() throws DataAccessException {
+    public void testCreateGameFail() throws dataaccess.DataAccessException {
         ChessGame chessGame = new ChessGame();
         GameData gameData = new GameData(2, "Jim", "John", "dagame", chessGame);
         GameData gameData2 = new GameData(2, "Jim", "John", "dagame", chessGame);
@@ -62,7 +63,7 @@ public class SQLGameTests {
 
     @Test
     @DisplayName("Find Game Success")
-    public void testFindGame() throws DataAccessException {
+    public void testFindGame() throws dataaccess.DataAccessException {
         ChessGame chessGame = new ChessGame();
         GameData gameData = new GameData(2, "steve", "Phil", "idk", chessGame);
         sqlGame.createGame(gameData);
