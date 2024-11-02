@@ -28,20 +28,16 @@ public class SQLUser implements UserDAO {
             try (var createTableStatement = conn.prepareStatement(createUserTable)) {
                 createTableStatement.execute();
             }
-        } catch (SQLException e) {
-            //handle it
         }
     }
 
-    void insertUser(Connection conn, String userName, String password, String email) throws DataAccessException, SQLException {
+    void insertUser(Connection conn, String userName, String password, String email) throws SQLException {
         try (var preparedStatement = conn.prepareStatement("INSERT INTO userTable (userName, password, email) VALUES(?, ?, ?)")) {
             preparedStatement.setString(1, userName);
             preparedStatement.setString(2, password);
             preparedStatement.setString(3, email);
             preparedStatement.executeUpdate();
 
-        } catch (SQLException e) {
-            //handle
         }
     }
 
@@ -56,28 +52,15 @@ public class SQLUser implements UserDAO {
 
                     return new UserData(username, password, email);
                 } else {
-                    return null;
+                    throw new DataAccessException("Error: User not found");
                 }
-            }//catch?
+            }
         }
     }
 
-    void deleteUser(Connection conn, String userName) throws DataAccessException, SQLException {
-        try (var preparedStatement = conn.prepareStatement("DELETE FROM userTable WHERE userName = ?")) {
-            preparedStatement.setString(1, userName);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            //handle
-        }
-    }
-
-    //clear and delete are different though,
-
-    void clearUser(Connection conn, String userName) throws DataAccessException, SQLException {
+    void clearUser(Connection conn) throws SQLException {
         try (var preparedStatement = conn.prepareStatement("TRUNCATE TABLE userTable")) {
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            //handle
         }
     }
 
@@ -86,7 +69,7 @@ public class SQLUser implements UserDAO {
         try (var conn = DatabaseManager.getConnection()){
             insertUser(conn, userData.username(), userData.password(), userData.email());
         } catch (SQLException e) {
-            //handle
+            throw new DataAccessException("Error: Unable to create user");
         }
     }
 
@@ -95,13 +78,16 @@ public class SQLUser implements UserDAO {
         try (var conn = DatabaseManager.getConnection()){
             return queryUser(conn, username); // simplified from IJ
         } catch (SQLException e) {
-            //handle
+            throw new DataAccessException("Error: IDK");
         }
-        return null;
     }
 
     @Override
     public void clear() throws DataAccessException {
-
+        try (var conn = DatabaseManager.getConnection()){
+            clearUser(conn);
+        } catch (SQLException e) {
+            throw new DataAccessException("Error: IDK");
+        }
     }
 }

@@ -3,7 +3,6 @@ package dataaccess.SQL;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
-import dataaccess.memory.MemoryAuth;
 import model.AuthData;
 
 import java.sql.Connection;
@@ -26,23 +25,17 @@ public class SQLAuth implements AuthDAO {
             try (var createTableStatement = conn.prepareStatement(createAuthTable)) {
                 createTableStatement.executeUpdate();
             }
-        } catch (DataAccessException | SQLException e){
-            //handle it
+        } catch (SQLException e){
+            throw new DataAccessException("Error: IDK");
         }
     }
-    //close the connection
-    //try-with-resource
 
-    //check the suggested imports with TA
-    //what return type? should it be void like createAuth?
     void insertAuth(Connection conn, String userName, String authToken) throws SQLException {
         try (var preparedStatement = conn.prepareStatement("INSERT INTO authTable (userName, authToken) VALUES(?, ?)")) {
             preparedStatement.setString(1, userName);
             preparedStatement.setString(2, authToken);
 
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            //handle
         }
     }
 
@@ -65,25 +58,22 @@ public class SQLAuth implements AuthDAO {
                 } else {
                     return null;
                 }
-            } //catch??
+            }
         }
     }
 
     void clearAuth(Connection conn) throws SQLException {
         try (var preparedStatement = conn.prepareStatement("TRUNCATE TABLE authTable")) {
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            //handle it
         }
     }
 
-    //should I change this to have a return?
     @Override
     public void createAuth(AuthData authData) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()){
             insertAuth(conn, authData.username(), authData.authToken());
         } catch (SQLException e) {
-            //throw data access?
+            throw new DataAccessException("Error: IDK");
         }
     }
 
@@ -115,7 +105,7 @@ public class SQLAuth implements AuthDAO {
         try (var conn = DatabaseManager.getConnection()){
             clearAuth(conn);
         } catch (SQLException e) {
-            //handle
+            throw new DataAccessException("Error: bad request");
         }
     }
 }
