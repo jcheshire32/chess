@@ -73,7 +73,7 @@ public class SQLAuth implements AuthDAO {
         try (var conn = DatabaseManager.getConnection()){
             insertAuth(conn, authData.username(), authData.authToken());
         } catch (SQLException e) {
-            throw new DataAccessException("Error: IDK");
+            throw new DataAccessException(e.getMessage());
         }
     }
 
@@ -87,7 +87,7 @@ public class SQLAuth implements AuthDAO {
                 return null;
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error: bad request");
+            throw new DataAccessException(e.getMessage());
         }
     }
 
@@ -96,7 +96,7 @@ public class SQLAuth implements AuthDAO {
         try (var conn = DatabaseManager.getConnection()) {
             deleteAuth(conn, authToken);
         } catch (SQLException e) {
-            throw new DataAccessException("Error: bad request");
+            throw new DataAccessException(e.getMessage());
         }
     }
 
@@ -105,7 +105,7 @@ public class SQLAuth implements AuthDAO {
         try (var conn = DatabaseManager.getConnection()){
             clearAuth(conn);
         } catch (SQLException e) {
-            throw new DataAccessException("Error: bad request");
+            throw new DataAccessException(e.getMessage());
         }
     }
 }

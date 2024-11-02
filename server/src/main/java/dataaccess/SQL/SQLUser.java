@@ -67,7 +67,7 @@ public class SQLUser implements UserDAO {
         try (var conn = DatabaseManager.getConnection()){
             insertUser(conn, userData.username(), userData.password(), userData.email());
         } catch (SQLException e) {
-            throw new DataAccessException("Error: Unable to create user");
+            throw new DataAccessException(e.getMessage());
         }
     }
 
@@ -76,7 +76,7 @@ public class SQLUser implements UserDAO {
         try (var conn = DatabaseManager.getConnection()){
             return queryUser(conn, username); // simplified from IJ
         } catch (SQLException e) {
-            throw new DataAccessException("Error: IDK");
+            throw new DataAccessException(e.getMessage());
         }
     }
 
@@ -86,7 +86,7 @@ public class SQLUser implements UserDAO {
         try (var conn = DatabaseManager.getConnection()){
             clearUser(conn);
         } catch (SQLException e) {
-            throw new DataAccessException("Error: IDK");
+            throw new DataAccessException(e.getMessage());
         }
     }
 }
