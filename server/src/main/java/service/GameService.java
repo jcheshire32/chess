@@ -86,14 +86,10 @@ public class GameService {
         return false;
     }
     public JoinGameResult joinGame(String authToken, JoinGameRequest game) throws
-            UnauthorizedException, BadRequestException, AlreadyTakenException, OtherException {
+            UnauthorizedException, BadRequestException, AlreadyTakenException, DataAccessException {
         String username;
-        try {
-            username = authDAO.getAuth(authToken);
-            if (username == null){
-                throw new UnauthorizedException("Error: unauthorized");
-            }
-        } catch (DataAccessException e) {
+        username = authDAO.getAuth(authToken);
+        if (username == null){
             throw new UnauthorizedException("Error: unauthorized");
         }
         //FIND GAME
@@ -101,37 +97,28 @@ public class GameService {
         if (gameStorage == null){
             throw new BadRequestException("Error: bad request");
         }
-        GameData game2join;
-        try {
-            game2join = gameStorage.findGame(game.gameID()); //from parameter
-            if (game2join == null) {
-                throw new BadRequestException("Error: bad request");
-            }
-        } catch (DataAccessException e) {
-            throw new OtherException("Error: Couldn't join game");
+        GameData game2join = gameStorage.findGame(game.gameID()); //from parameter
+        if (game2join == null) {
+            throw new BadRequestException("Error: bad request");
         }
         //UPDATE GAME
         //make sure the team they're trying to join is null or already their name
-        try {
-            if (game.playerColor == ChessGame.TeamColor.WHITE) {
-                if (game2join.whiteUsername() == null) {
-                    gameStorage.updateGame(new GameData(game2join.gameID(), username, game2join.blackUsername(),
-                            game2join.gameName(), game2join.game()));
-                } else {
-                    throw new AlreadyTakenException("Error: already taken");
-                }
-            } else if (game.playerColor == ChessGame.TeamColor.BLACK) {
-                if (game2join.blackUsername() == null) {
-                    gameStorage.updateGame(new GameData(game2join.gameID(), game2join.whiteUsername(), username,
-                            game2join.gameName(), game2join.game()));
-                } else {
-                    throw new AlreadyTakenException("Error: already taken");
-                }
-            } else { //Neither white nor black
-                throw new BadRequestException("Error: bad request");
+        if (game.playerColor == ChessGame.TeamColor.WHITE) {
+            if (game2join.whiteUsername() == null) {
+                gameStorage.updateGame(new GameData(game2join.gameID(), username, game2join.blackUsername(),
+                        game2join.gameName(), game2join.game()));
+            } else {
+                throw new AlreadyTakenException("Error: already taken");
             }
-        } catch (DataAccessException e) {
-            throw new OtherException("Error: " + e.getMessage());
+        } else if (game.playerColor == ChessGame.TeamColor.BLACK) {
+            if (game2join.blackUsername() == null) {
+                gameStorage.updateGame(new GameData(game2join.gameID(), game2join.whiteUsername(), username,
+                        game2join.gameName(), game2join.game()));
+            } else {
+                throw new AlreadyTakenException("Error: already taken");
+            }
+        } else { //Neither white nor black
+            throw new BadRequestException("Error: bad request");
         }
         return new JoinGameResult();
     }

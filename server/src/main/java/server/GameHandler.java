@@ -7,6 +7,7 @@ import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import service.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -104,7 +105,8 @@ public class GameHandler {
             res.status(403);
             res.body(serializer.toJson(temp));
             return res.body();
-        } catch (OtherException e) {
+        } catch (DataAccessException e) {
+            System.out.println(Arrays.toString(e.getStackTrace()));
             Map<String, String> temp = new HashMap<>();
             temp.put("message", e.getMessage());
             res.status(500);

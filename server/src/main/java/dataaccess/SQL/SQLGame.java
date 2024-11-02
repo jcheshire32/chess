@@ -50,7 +50,7 @@ public class SQLGame implements GameDAO {
     }
 
     void updateGame(Connection conn, int gameID, String whiteUserName, String blackUserName, String gameName, String game) throws SQLException {
-        try (var preparedStatement = conn.prepareStatement("UPDATE gameTable SET whiteUserName = ?, blackUserName = ?, gameName = ?, game = ?, WHERE gameID = ?")) {
+        try (var preparedStatement = conn.prepareStatement("UPDATE gameTable SET whiteUserName = ?, blackUserName = ?, gameName = ?, game = ? WHERE gameID = ?")) {
             preparedStatement.setString(1, whiteUserName);
             preparedStatement.setString(2, blackUserName);
             preparedStatement.setString(3, gameName);
@@ -104,7 +104,7 @@ public class SQLGame implements GameDAO {
         try (var conn = DatabaseManager.getConnection()){
             return listGames(conn);
         } catch (SQLException e) {
-            throw new DataAccessException("Error: IDK");
+            throw new DataAccessException(e.getMessage());
         }
     }
 
@@ -114,7 +114,7 @@ public class SQLGame implements GameDAO {
         try (var conn = DatabaseManager.getConnection()){
             insertGame(conn, game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), serializer.toJson(game.game()));
         } catch (SQLException e) {
-            throw new DataAccessException("Error: IDK");
+            throw new DataAccessException(e.getMessage());
         }
     }
 
@@ -123,7 +123,7 @@ public class SQLGame implements GameDAO {
         try (var conn = DatabaseManager.getConnection()){
             return queryGame(conn, gameID);
         } catch (SQLException e) {
-            throw new DataAccessException("Error: IDK");
+            throw new DataAccessException(e.getMessage());
         }
     }
 
@@ -133,7 +133,7 @@ public class SQLGame implements GameDAO {
         try (var conn = DatabaseManager.getConnection()){
             updateGame(conn, gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), serializer.toJson(gameData.game()));
         } catch (SQLException e) {
-            throw new DataAccessException("Error: IDK");
+            throw new DataAccessException(e.getMessage());
         }
     }
 
