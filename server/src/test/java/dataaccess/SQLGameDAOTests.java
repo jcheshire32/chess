@@ -1,7 +1,6 @@
-package dataaccesstests;
+package dataaccess;
 
 import chess.ChessGame;
-import dataaccess.DataAccessException;
 import dataaccess.sql.SQLGame;
 import model.GameData;
 import org.junit.jupiter.api.Assertions;
