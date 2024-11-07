@@ -1,7 +1,10 @@
 package ui;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
+import model.GameData;
 import model.UserData;
+import service.GameService;
 import service.UserService;
 
 import java.io.IOException;
@@ -18,10 +21,47 @@ public class ServerFacade {
         serverUrl = url;
     }
 
+    //PRE LOGIN
+
     public UserService.RegisterResult register(UserData user) {
         var path = "/user";
-
+        return this.makeRequest("POST", path, user, UserService.RegisterResult.class);
     }
+
+    public UserService.LoginResult login(UserData user) {
+        var path = "/session"; //same as server right?
+        return this.makeRequest("POST", path, user, UserService.LoginResult.class);
+    }
+
+    //quit
+
+    //help
+
+    //POST LOGIN
+
+    public UserService.LogoutResult logout(UserData user) {
+        var path = "/session";
+        return this.makeRequest("DELETE", path, user, UserService.LogoutResult.class);
+    }
+
+    public GameService.CreateGameResult createGame(GameData game) {
+        var path = "/game";
+        return this.makeRequest("POST", path, game, GameService.CreateGameResult.class);
+    }
+
+    public GameData[] listGames() { //could not make it like petshop and instead like gameservice
+        var path = "/game";
+        record listGames(GameData[] games) {}
+        var response = this.makeRequest("GET", path, null, listGames.class);
+        return response.games();
+    }
+
+    public GameService.JoinGameResult playGame(UserData user, GameData game) { //auth data needed for joining game?
+        var path = "/game";
+        return this.makeRequest("PUT", path, game, GameService.JoinGameResult.class);
+    }
+
+    //observe game
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) {
         try{
@@ -35,7 +75,7 @@ public class ServerFacade {
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         } catch (Exception e) {
-            //handle it
+            throw new RuntimeException(e); //NOT ACTUALLY THIS EXCEPTION
         }
     }
 
