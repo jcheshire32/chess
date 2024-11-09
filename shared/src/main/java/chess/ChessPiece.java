@@ -36,6 +36,7 @@ public class ChessPiece {
      * The various different chess piece options
      */
     public enum PieceType {
+        //Could link the string here
         KING,
         QUEEN,
         BISHOP,

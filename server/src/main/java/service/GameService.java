@@ -1,27 +1,19 @@
 package service;
 
+import RecordClasses.CreateGameResult;
+import RecordClasses.JoinGameRequest;
+import RecordClasses.JoinGameResult;
+import RecordClasses.ListGamesResult;
 import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
-import dataaccess.memory.MemoryAuth;
-import dataaccess.memory.MemoryGame;
-import model.AuthData;
 import model.GameData;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GameService {
-    //delete the ones I don't use, make the other top level
-    public record ListGamesRequest(AuthData authToken){}
-    public record ListGamesResult(List<GameData> games){}
-    public record CreateGameRequest(String gameName){}
-    public record CreateGameResult(int gameID){}
-    public record JoinGameRequest(ChessGame.TeamColor playerColor, int gameID){}
-    public record JoinGameResult(){}
 
     private AuthDAO authDAO;
     private GameDAO gameDAO;
@@ -103,14 +95,14 @@ public class GameService {
         }
         //UPDATE GAME
         //make sure the team they're trying to join is null or already their name
-        if (game.playerColor == ChessGame.TeamColor.WHITE) {
+        if (game.playerColor() == ChessGame.TeamColor.WHITE) {
             if (game2join.whiteUsername() == null) {
                 gameStorage.updateGame(new GameData(game2join.gameID(), username, game2join.blackUsername(),
                         game2join.gameName(), game2join.game()));
             } else {
                 throw new AlreadyTakenException("Error: already taken");
             }
-        } else if (game.playerColor == ChessGame.TeamColor.BLACK) {
+        } else if (game.playerColor() == ChessGame.TeamColor.BLACK) {
             if (game2join.blackUsername() == null) {
                 gameStorage.updateGame(new GameData(game2join.gameID(), game2join.whiteUsername(), username,
                         game2join.gameName(), game2join.game()));

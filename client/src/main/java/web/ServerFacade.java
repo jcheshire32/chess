@@ -1,11 +1,9 @@
-package ui;
+package web;
 
-import chess.ChessGame;
+import RecordClasses.*;
 import com.google.gson.Gson;
 import model.GameData;
 import model.UserData;
-import service.GameService;
-import service.UserService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,30 +21,26 @@ public class ServerFacade {
 
     //PRE LOGIN
 
-    public UserService.RegisterResult register(UserData user) {
+    public RegisterResult register(RegisterRequest req) {
         var path = "/user";
-        return this.makeRequest("POST", path, user, UserService.RegisterResult.class);
+        return this.makeRequest("POST", path, req, RegisterResult.class);
     }
 
-    public UserService.LoginResult login(UserData user) {
+    public LoginResult login(LoginRequest req) {
         var path = "/session"; //same as server right?
-        return this.makeRequest("POST", path, user, UserService.LoginResult.class);
+        return this.makeRequest("POST", path, req, LoginResult.class);
     }
-
-    //quit
-
-    //help
 
     //POST LOGIN
 
-    public UserService.LogoutResult logout(UserData user) {
+    public LogoutResult logout(UserData user) {
         var path = "/session";
-        return this.makeRequest("DELETE", path, user, UserService.LogoutResult.class);
+        return this.makeRequest("DELETE", path, user, LogoutResult.class);
     }
 
-    public GameService.CreateGameResult createGame(GameData game) {
+    public CreateGameResult createGame(GameData game) {
         var path = "/game";
-        return this.makeRequest("POST", path, game, GameService.CreateGameResult.class);
+        return this.makeRequest("POST", path, game, CreateGameResult.class);
     }
 
     public GameData[] listGames() { //could not make it like petshop and instead like gameservice
@@ -56,9 +50,9 @@ public class ServerFacade {
         return response.games();
     }
 
-    public GameService.JoinGameResult playGame(UserData user, GameData game) { //auth data needed for joining game?
+    public JoinGameResult playGame(UserData user, GameData game) { //auth data needed for joining game?
         var path = "/game";
-        return this.makeRequest("PUT", path, game, GameService.JoinGameResult.class);
+        return this.makeRequest("PUT", path, game, JoinGameResult.class);
     }
 
     //observe game

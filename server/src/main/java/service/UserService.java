@@ -1,31 +1,19 @@
 package service;
 
+import RecordClasses.*;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import model.AuthData;
 import model.UserData;
-import dataaccess.memory.MemoryUser;
-import dataaccess.memory.MemoryAuth;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.UUID;
 
 
 public class UserService {
-    public 	record RegisterRequest(String username,String password, String email){
-    }
-    public 	record RegisterResult(String username,String authToken){
-    }
-    public 	record LoginRequest(String username,String password){
-    }
-    public 	record LoginResult(String username,String authToken){
-    }
-    public record LogoutRequest(AuthData authToken){
-    }
-    public record LogoutResult(){
-    }
+//    public record LogoutRequest(AuthData authToken){
+//    }
 
     private AuthDAO authDAO;
     private UserDAO userDAO;
@@ -37,14 +25,14 @@ public class UserService {
     }
 
     public RegisterResult register(RegisterRequest user) throws UnauthorizedException, BadRequestException, AlreadyTakenException {
-        if (user.username == null || user.password == null || user.email == null) {
+        if (user.username() == null || user.password() == null || user.email() == null) {
             throw new BadRequestException("Error: bad request");
         }
         UserData userData;
         //create user
         try{
             //make hashed passord then pass in
-            String hashPassword = BCrypt.hashpw(user.password, BCrypt.gensalt());
+            String hashPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
             userData = new UserData(user.username(), hashPassword, user.email());
             userDAO.createUser(userData);
         } catch (DataAccessException e) {
@@ -68,17 +56,17 @@ public class UserService {
             throw new UnauthorizedException("Error: User not found"); //401
         }
         //bcrypt instead of equals
-        if (!BCrypt.checkpw(user.password, userData.password())){
+        if (!BCrypt.checkpw(user.password(), userData.password())){
             throw new UnauthorizedException("Error: Wrong password"); //still 401
         }
         String authToken = UUID.randomUUID().toString();
-        AuthData authData = new AuthData(authToken,user.username);
+        AuthData authData = new AuthData(authToken,user.username());
         try {
             authDAO.createAuth(authData);
         } catch (DataAccessException e) {
             throw new UnauthorizedException("Error: unauthorized");
         }
-        return new LoginResult(user.username, authToken);
+        return new LoginResult(user.username(), authToken);
     }
     public LogoutResult logout(String authToken) throws UnauthorizedException, BadRequestException {
         String authData;

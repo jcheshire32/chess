@@ -1,13 +1,14 @@
 package server;
 
 
+import RecordClasses.CreateGameRequest;
+import RecordClasses.JoinGameRequest;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import service.*;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class GameHandler {
     }
     public Object createGame(Request req, Response res){ //takes a JSON object and a nonJSON object
         var serializer = new Gson();
-        var createGameRequest = serializer.fromJson(req.body(), GameService.CreateGameRequest.class);
+        var createGameRequest = serializer.fromJson(req.body(), CreateGameRequest.class);
         GameService gameService = new GameService(authDAO, gameDAO);
         String authToken = req.headers("Authorization");
         try {
@@ -57,7 +58,7 @@ public class GameHandler {
     }
     public Object joinGame(Request req, Response res){
         var serializer = new Gson();
-        var joinGameRequest = serializer.fromJson(req.body(), GameService.JoinGameRequest.class);
+        var joinGameRequest = serializer.fromJson(req.body(), JoinGameRequest.class);
         GameService gameService = new GameService(authDAO, gameDAO);
         String authToken = req.headers("Authorization");
         try {

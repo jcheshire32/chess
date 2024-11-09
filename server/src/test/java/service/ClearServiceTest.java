@@ -1,5 +1,7 @@
 package service;
 
+import RecordClasses.RegisterRequest;
+import RecordClasses.RegisterResult;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
@@ -32,8 +34,8 @@ public class ClearServiceTest {
     public void testClear() throws
             DataAccessException, ServiceException, UnauthorizedException,
             BadRequestException, AlreadyTakenException, OtherException {
-        UserService.RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(
-                new UserService.RegisterRequest("Jim", "Jim", "Jim"));
+        RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(
+                new RegisterRequest("Jim", "Jim", "Jim"));
 
         gameService.createGame(registeredPerson.authToken(), "game1");
 

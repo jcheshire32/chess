@@ -1,6 +1,9 @@
 package service;
 
 
+import RecordClasses.LoginRequest;
+import RecordClasses.RegisterRequest;
+import RecordClasses.RegisterResult;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
@@ -32,8 +35,8 @@ public class UserServiceTests {
     @Order(1)
     @DisplayName("Register Success")
     public void registerSuccess() throws UnauthorizedException, BadRequestException, AlreadyTakenException {
-        UserService.RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(
-                new UserService.RegisterRequest("Jim", "Jim", "Jim"));
+        RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(
+                new RegisterRequest("Jim", "Jim", "Jim"));
         Assertions.assertEquals("Jim", registeredPerson.username());
     }
 
@@ -42,14 +45,14 @@ public class UserServiceTests {
     @DisplayName("Register Fail")
     public void registerFail() throws UnauthorizedException, BadRequestException, AlreadyTakenException {
         Assertions.assertThrows(BadRequestException.class, ()->new UserService(authDAO,userDAO).register(
-                new UserService.RegisterRequest(null, "Jim", "Jim")));
+                new RegisterRequest(null, "Jim", "Jim")));
     }
 
     @Test
     @DisplayName("Login Success")
     public void loginSuccess() throws UnauthorizedException, BadRequestException, AlreadyTakenException {
-        UserService.RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(
-                new UserService.RegisterRequest("Jim", "Jim", "Jim"));
+        RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(
+                new RegisterRequest("Jim", "Jim", "Jim"));
         Assertions.assertEquals("Jim", registeredPerson.username());
 
        String authToken = registeredPerson.authToken();
@@ -59,11 +62,11 @@ public class UserServiceTests {
     @Test
     @DisplayName("Login Fail")
     public void loginFail() throws UnauthorizedException, BadRequestException, AlreadyTakenException {
-        UserService.RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(
-                new UserService.RegisterRequest("Jim", "Jim", "Jim"));
+        RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(
+                new RegisterRequest("Jim", "Jim", "Jim"));
         Assertions.assertEquals("Jim", registeredPerson.username());
 
-        UserService.LoginRequest request = new UserService.LoginRequest("phil", "phil");
+        LoginRequest request = new LoginRequest("phil", "phil");
         Assertions.assertThrows(UnauthorizedException.class, ()-> userService.login(request));
     }
 
@@ -72,8 +75,8 @@ public class UserServiceTests {
     public void logoutSuccess() throws
             UnauthorizedException, BadRequestException, AlreadyTakenException, DataAccessException {
         //make sure auth token is deleted
-        UserService.RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(
-                new UserService.RegisterRequest("Jim", "Jim", "Jim"));
+        RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(
+                new RegisterRequest("Jim", "Jim", "Jim"));
         Assertions.assertEquals("Jim", registeredPerson.username());
 
         String authToken = registeredPerson.authToken();
@@ -86,8 +89,8 @@ public class UserServiceTests {
     @Test
     @DisplayName("Logout Fail")
     public void logoutFail() throws UnauthorizedException, BadRequestException, AlreadyTakenException {
-        UserService.RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(
-                new UserService.RegisterRequest("Jim", "Jim", "Jim"));
+        RegisterResult registeredPerson = new UserService(authDAO,userDAO).register(
+                new RegisterRequest("Jim", "Jim", "Jim"));
         Assertions.assertEquals("Jim", registeredPerson.username());
 
         String authToken = registeredPerson.authToken();

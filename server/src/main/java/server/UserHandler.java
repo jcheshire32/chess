@@ -1,5 +1,7 @@
 package server;
 
+import RecordClasses.LoginRequest;
+import RecordClasses.RegisterRequest;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
@@ -24,7 +26,7 @@ public class UserHandler {
     }
     public Object register(Request req, Response res){
         var serializer = new Gson();
-        var registerRequest = serializer.fromJson(req.body(), UserService.RegisterRequest.class);
+        var registerRequest = serializer.fromJson(req.body(), RegisterRequest.class);
         UserService registerService = new UserService(authDAO,userDAO);
         try {
             var registerResult = registerService.register(registerRequest);
@@ -80,7 +82,7 @@ public class UserHandler {
 
     public Object login(Request req, Response res){
         var serializer = new Gson();
-        var loginRequest = serializer.fromJson(req.body(), UserService.LoginRequest.class);
+        var loginRequest = serializer.fromJson(req.body(), LoginRequest.class);
         //stuff
         UserService loginService = new UserService(authDAO,userDAO);
         try {
