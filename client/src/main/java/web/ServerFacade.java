@@ -1,6 +1,7 @@
 package web;
 
 import RecordClasses.*;
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
 import model.UserData;
@@ -10,10 +11,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.*;
+import java.util.List;
 
 public class ServerFacade {
 
     private final String serverUrl;
+    private String authToken = null;
 
     public ServerFacade(String url) {
         serverUrl = url;
@@ -23,39 +26,44 @@ public class ServerFacade {
 
     public RegisterResult register(RegisterRequest req) {
         var path = "/user";
-        return this.makeRequest("POST", path, req, RegisterResult.class);
+        RegisterResult result = this.makeRequest("POST", path, req, RegisterResult.class);
+        authToken = result.authToken();
+        return result;
     }
 
     public LoginResult login(LoginRequest req) {
         var path = "/session"; //same as server right?
-        return this.makeRequest("POST", path, req, LoginResult.class);
+        LoginResult result = this.makeRequest("POST", path, req, LoginResult.class);
+        authToken = result.authToken();
+        return result;
     }
 
     //POST LOGIN
 
-    public LogoutResult logout(UserData user) {
+    public LogoutResult logout(String authToken) {
         var path = "/session";
-        return this.makeRequest("DELETE", path, user, LogoutResult.class);
+        LogoutResult result = this.makeRequest("DELETE", path, authToken, LogoutResult.class);
+        authToken = null;
+        return result;
     }
 
-    public CreateGameResult createGame(GameData game) {
+    public CreateGameResult createGame(String name) {
         var path = "/game";
-        return this.makeRequest("POST", path, game, CreateGameResult.class);
+        return this.makeRequest("POST", path, name, CreateGameResult.class);
     }
 
-    public GameData[] listGames() { //could not make it like petshop and instead like gameservice
+    public List<GameData> listGames() {
         var path = "/game";
-        record listGames(GameData[] games) {}
+        record listGames(List<GameData> games) {}
         var response = this.makeRequest("GET", path, null, listGames.class);
         return response.games();
     }
 
-    public JoinGameResult playGame(UserData user, GameData game) { //auth data needed for joining game?
+    public JoinGameResult joinGame(int ID, ChessGame.TeamColor color) {
         var path = "/game";
+        JoinGameRequest game = new JoinGameRequest(color, ID);
         return this.makeRequest("PUT", path, game, JoinGameResult.class);
     }
-
-    //observe game
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) {
         try{
@@ -64,11 +72,15 @@ public class ServerFacade {
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
+            if (authToken != null){
+                http.addRequestProperty("Authorization", authToken);
+            }
+
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
-        } catch (Exception e) {
+        } catch (Exception e) { //throw an exception, handle in the pre/post login
             throw new RuntimeException(e); //NOT ACTUALLY THIS EXCEPTION
         }
     }
