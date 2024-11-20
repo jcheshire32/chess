@@ -32,7 +32,7 @@ public class Board {
 
         drawWhiteHeaders(out);
 
-        for (int i = 0; i < BOARD_SIZE; i++) {
+        for (int i = BOARD_SIZE - 1; i >= 0; i--) {
             drawWhiteRow(out, i);
         }
         drawWhiteHeaders(out);
@@ -44,6 +44,7 @@ public class Board {
     private static void drawWhiteHeaders(PrintStream out) {
 
         setGray(out);
+        out.print(SET_TEXT_COLOR_BLACK);
 
         String[] headers = {"a", "b", "c", "d", "e", "f", "g", "h"};
         out.print("  ");
@@ -58,7 +59,7 @@ public class Board {
         String[] headers = {"h", "g", "f", "e", "d", "c", "b", "a"};
         out.print("  ");
         for (String header : headers) {
-            out.print(header);
+            out.print("  " + header);
         }
         out.println();
     }

@@ -99,8 +99,8 @@ public class PostLogin {
                         ChessGame game = selectedGame.game();
                         Board board = new Board();
                         board.updateBoard(game.getBoard().getBoard());
+                        board.displayBoard(); //just white board for now....
                     }
-                    //just print the board
                     //more code here in phase 6
             }
         }
