@@ -9,185 +9,192 @@ import java.nio.charset.StandardCharsets;
 
 import static ui.EscapeSequences.*;
 
+//loop through a board and get the pieces and print them as they go.
 public class Board {
 
     // Board dimensions.
-    private static final int BOARD_SIZE_IN_SQUARES = 8;
-    private static final int SQUARE_SIZE_IN_PADDED_CHARS = 3;
-    private static final int LINE_WIDTH_IN_PADDED_CHARS = 1;
+    private static final int BOARD_SIZE = 8;
+    private ChessPiece[][] board;
+//    private static final int SQUARE_SIZE_IN_PADDED_CHARS = 3;
+//    private static final int LINE_WIDTH_IN_PADDED_CHARS = 1;
 
-    // Padded characters.
-    private static final ChessPiece EMPTY = null;
-    private static final ChessPiece b_pawn = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-    private static final ChessPiece w_pawn = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-    private static final ChessPiece b_rook = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
-    private static final ChessPiece w_rook = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
-    private static final ChessPiece b_knight = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
-    private static final ChessPiece w_knight = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
-    private static final ChessPiece b_bishop = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
-    private static final ChessPiece w_bishop = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-    private static final ChessPiece b_queen = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
-    private static final ChessPiece w_queen = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
-    private static final ChessPiece b_king = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
-    private static final ChessPiece w_king = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+    public Board() {
+        this.board = new ChessPiece[BOARD_SIZE][BOARD_SIZE];
+    }
 
+    public void updateBoard(ChessPiece[][] newBoard) {
+        this.board = newBoard;
+    }
 
-    private static final ChessPiece[][] boardStart = {
-            {b_rook, b_knight, b_bishop, b_queen, b_king, b_bishop, b_knight, b_rook},
-            {b_pawn, b_pawn, b_pawn, b_pawn, b_pawn, b_pawn, b_pawn, b_pawn},
-            {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-            {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-            {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-            {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-            {w_pawn, w_pawn, w_pawn, w_pawn, w_pawn, w_pawn, w_pawn, w_pawn},
-            {w_rook, w_knight, w_bishop, w_queen, w_king, w_bishop, w_knight, w_rook}
-    };
-
-    public static void main(String[] args) {
-        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-
+    public void displayBoard() {
+        PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(ERASE_SCREEN);
 
-        drawHeaders(out);
+        drawWhiteHeaders(out);
 
-        drawTicTacToeBoard(out);
-
-        drawHeaders(out);
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            drawWhiteRow(out, i);
+        }
+        drawWhiteHeaders(out);
 
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    private static void drawHeaders(PrintStream out) {
+    private static void drawWhiteHeaders(PrintStream out) {
 
         setGray(out);
 
         String[] headers = {"a", "b", "c", "d", "e", "f", "g", "h"};
         out.print("  ");
-        for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-            drawHeader(out, headers[boardCol]);
-
-            if (boardCol < BOARD_SIZE_IN_SQUARES - 1) {
-                out.print(" ".repeat(LINE_WIDTH_IN_PADDED_CHARS));
-            }
+        for (String header : headers) {
+            out.print("  " + header); //might need to pad with spaces again
         }
-
         out.println();
     }
 
-    private static void drawHeader(PrintStream out, String headerText) {
-        int prefixLength = SQUARE_SIZE_IN_PADDED_CHARS / 2;
-
-        out.print(" ".repeat(prefixLength));
-        printHeaderText(out, headerText);
-    }
-
-    private static void printHeaderText(PrintStream out, String player) {
-        out.print(SET_BG_COLOR_LIGHT_GREY);
-        out.print(SET_TEXT_COLOR_BLACK);
-
-        out.print(player);
-
+    private static void drawBlackHeaders(PrintStream out) {
         setGray(out);
-
+        String[] headers = {"h", "g", "f", "e", "d", "c", "b", "a"};
+        out.print("  ");
+        for (String header : headers) {
+            out.print(header);
+        }
+        out.println();
     }
 
-    private static void drawTicTacToeBoard(PrintStream out) {
+    private void drawWhiteRow(PrintStream out, int row) {
+        out.print(SET_TEXT_COLOR_BLACK);
+        out.print(" " + (row + 1) + " ");
+        out.print(SET_BG_COLOR_LIGHT_GREY);
+        for (int col = 0; col < BOARD_SIZE; col++) {
+            if ((row + col) % 2 == 0) {
+                setWhite(out);
+            } else {
+                setBlack(out);
+            }
+            printSquare(out, board[row][col]);
+            setGray(out);
+        }
+        out.print(SET_TEXT_COLOR_BLACK);
+        out.print(" " + (row + 1));
+        out.println();
+        //might need to fix display here again.
+    }
 
-        for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
+    private void drawBlackRow(PrintStream out, int row) {
+        out.print(SET_TEXT_COLOR_BLACK);
+        out.print(" " + (row + 1) + " ");
+        out.print(SET_BG_COLOR_LIGHT_GREY);
+        for (int col = BOARD_SIZE - 1; col >= 0; col--) {
+            if ((row + col) % 2 == 0) {
+                setWhite(out);
+            } else {
+                setBlack(out);
+            }
+            printSquare(out, board[row][col]);
+            setGray(out);
+        }
+        out.print(SET_TEXT_COLOR_BLACK);
+        out.print(" " + (row + 1));
+    }
 
-            drawRowOfSquares(out, boardRow);
+    private void printSquare(PrintStream out, ChessPiece piece) { //piece or string
+        if (piece == null) {
+            out.print("   ");
+        } else {
+            if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) { //FIX COLORS LATER
+                out.print(SET_TEXT_COLOR_GREEN);
+            } else {
+                out.print(SET_TEXT_COLOR_RED);
+            }
+            out.print(" " + getPieceSymbol(piece) + " ");
         }
     }
 
-    private static void drawRowOfSquares(PrintStream out, int boardRow) {
-
-        for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_PADDED_CHARS; ++squareRow) {
-            if (squareRow == SQUARE_SIZE_IN_PADDED_CHARS / 2){
-                out.print(SET_BG_COLOR_LIGHT_GREY);
-                out.print(SET_TEXT_COLOR_BLACK);
-                out.print(boardRow+1);
-                out.print(" ");
-            } else {
-                out.print("  ");
-            }
-            for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-                if ((boardCol + boardRow) % 2 == 0) {
-                    setWhite(out);
-                } else {
-                    setBlack(out);
-                }
-
-                if (squareRow == SQUARE_SIZE_IN_PADDED_CHARS / 2) {
-                    int prefixLength = SQUARE_SIZE_IN_PADDED_CHARS / 2;
-                    int suffixLength = SQUARE_SIZE_IN_PADDED_CHARS - prefixLength - 1;
-
-                    out.print(" ".repeat(prefixLength));
-                    printPlayer(out, boardStart[boardRow][boardCol]);
-                    out.print(" ".repeat(suffixLength));
-                } else {
-                    out.print(" ".repeat(SQUARE_SIZE_IN_PADDED_CHARS));
-                }
-                setGray(out);
-            }
-            if (squareRow == SQUARE_SIZE_IN_PADDED_CHARS / 2){
-                out.print(SET_BG_COLOR_LIGHT_GREY);
-                out.print(" ");
-                out.print(SET_TEXT_COLOR_BLACK);
-                out.print(boardRow+1);
-            } else {
-                out.print("  ");
-            }
-            out.println();
+    private char getPieceSymbol(ChessPiece piece) {
+        //maybe do the actual chess pieces later
+        switch (piece.getPieceType()) {
+            case KING:
+                return 'K';
+            case QUEEN:
+                return 'Q';
+            case ROOK:
+                return 'R';
+            case BISHOP:
+                return 'B';
+            case KNIGHT:
+                return 'N';
+            case PAWN:
+                return 'P';
+            default:
+                return ' ';
         }
     }
 
     private static void setWhite(PrintStream out) {
         out.print(SET_BG_COLOR_WHITE);
-        out.print(SET_TEXT_COLOR_WHITE);
     }
 
     private static void setBlack(PrintStream out) {
         out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_BLACK);
     }
 
     private static void setGray(PrintStream out) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
-        out.print(SET_TEXT_COLOR_LIGHT_GREY);
     }
 
-    private static void printPlayer(PrintStream out, ChessPiece player) {
-        //translate piecetype to letter. map or switch case
-        if (player == null){
-            out.print(" ");
-            return;
-        } else if (player.getTeamColor() == ChessGame.TeamColor.BLACK) {
-            out.print(SET_TEXT_COLOR_GREEN);
-        } else {
-            out.print(SET_TEXT_COLOR_RED);
+    public void whiteBoard() {
+        PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        out.print(ERASE_SCREEN);
+
+        drawWhiteHeaders(out);
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            drawWhiteRow(out, i);
         }
-        switch (player.getPieceType()) {
-            case KING:
-                out.print("K");
-                break;
-            case QUEEN:
-                out.print("Q");
-                break;
-            case BISHOP:
-                out.print("B");
-                break;
-            case KNIGHT:
-                out.print("N");
-                break;
-            case PAWN:
-                out.print("P");
-                break;
-            case ROOK:
-                out.print("R");
-                break;
-            default:
-                break;
+        drawWhiteHeaders(out);
+
+        out.print(SET_BG_COLOR_BLACK);
+        out.print(SET_TEXT_COLOR_WHITE);
+    }
+
+    public void blackBoard() {
+        PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        out.print(ERASE_SCREEN);
+        drawBlackHeaders(out);
+        for (int i = BOARD_SIZE - 1; i >= 0; i--) {
+            drawBlackRow(out,i);
         }
+        drawBlackHeaders(out);
+        out.print(SET_BG_COLOR_BLACK);
+        out.print(SET_TEXT_COLOR_WHITE);
     }
 }
+
+    // Padded characters.
+//    private static final ChessPiece EMPTY = null;
+//    private static final ChessPiece b_pawn = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+//    private static final ChessPiece w_pawn = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+//    private static final ChessPiece b_rook = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+//    private static final ChessPiece w_rook = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+//    private static final ChessPiece b_knight = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+//    private static final ChessPiece w_knight = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+//    private static final ChessPiece b_bishop = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+//    private static final ChessPiece w_bishop = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+//    private static final ChessPiece b_queen = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+//    private static final ChessPiece w_queen = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+//    private static final ChessPiece b_king = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+//    private static final ChessPiece w_king = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+//
+//
+//    private static final ChessPiece[][] boardStart = {
+//            {b_rook, b_knight, b_bishop, b_queen, b_king, b_bishop, b_knight, b_rook},
+//            {b_pawn, b_pawn, b_pawn, b_pawn, b_pawn, b_pawn, b_pawn, b_pawn},
+//            {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
+//            {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
+//            {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
+//            {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
+//            {w_pawn, w_pawn, w_pawn, w_pawn, w_pawn, w_pawn, w_pawn, w_pawn},
+//            {w_rook, w_knight, w_bishop, w_queen, w_king, w_bishop, w_knight, w_rook}
+//    };

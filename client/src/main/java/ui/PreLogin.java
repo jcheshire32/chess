@@ -23,10 +23,13 @@ public class PreLogin {
                     if (inputs.length != 4){
                         System.out.println("[ERROR] You must use this format: register <USERNAME> <PASSWORD> <EMAIL>");
                     } else {
-                        RegisterRequest user = new RegisterRequest(inputs[1],inputs[2],inputs[3]);
-                        RegisterResult registered_user = facade.register(user);
-                        String authToken = registered_user.authToken();
-                        return authToken;//how to handle failures
+                        try {
+                            RegisterRequest user = new RegisterRequest(inputs[1], inputs[2], inputs[3]);
+                            RegisterResult registered_user = facade.register(user);
+                            return registered_user.authToken(); //returning authtoken, shortened by IJ
+                        } catch (Exception e) {
+                            System.out.println(e); //specify later, Dont show user the stacktrace
+                        }
                     }
                     break;
                 case "login":

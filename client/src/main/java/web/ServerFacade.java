@@ -49,7 +49,7 @@ public class ServerFacade {
 
     public CreateGameResult createGame(String name) {
         var path = "/game";
-        return this.makeRequest("POST", path, name, CreateGameResult.class);
+        return this.makeRequest("POST", path, new CreateGameRequest(name), CreateGameResult.class);
     }
 
     public List<GameData> listGames() {

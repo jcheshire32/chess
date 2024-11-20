@@ -4,21 +4,23 @@ import RecordClasses.CreateGameRequest;
 import RecordClasses.CreateGameResult;
 import RecordClasses.ListGamesResult;
 import RecordClasses.LogoutResult;
+import chess.ChessBoard;
 import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
 import web.ServerFacade;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class PostLogin {
+    List<GameData> games;
+    HashMap<Integer, GameData> map = new HashMap<>();
+
 
     public Boolean Run(ServerFacade facade, String authToken) {
         while (true) { // break on quit again
-            System.out.println("[Logged in]>>> ");
+            System.out.print("[Logged in]>>> ");
             String input_line = new Scanner(System.in).nextLine();
             String[] inputs = input_line.split(" ");
             String command = inputs[0];
@@ -42,28 +44,42 @@ public class PostLogin {
                         String name = inputs[1];
                         facade.createGame(name);
                         System.out.println("Game created successfully");
-                        System.out.println("[Logged in]>>> "); //might delete
-                        //return?
                     }
                     break;
                 case "list":
-                    List<GameData> games;
                     games = facade.listGames();
-                    for (GameData game: games) {
-                        System.out.println(game);
+                    map.clear();
+                    for (int i=0; i< games.size(); i++){
+                        map.put(i, games.get(i));
+                    }
+                    if (map.isEmpty()){
+                        System.out.println("[ERROR] No games found");
+                    }
+                    for (int i=0; i < map.size(); i++) {
+                        GameData game = map.get(i); //go off this number in join, printed number is incorrectish
+                        System.out.println((i+1) + ". " + game.gameName() + " White: " +
+                                game.whiteUsername() + ", Black: " + game.blackUsername());
                     }
                     break;
+                    //join based on numbered list id, not actual game id
                 case "join":
                     if (inputs.length != 3){
                         System.out.println("[ERROR] You must use this format: join <ID> [WHITE|BLACK]");
                     }
                     else {
                         int id = Integer.parseInt(inputs[1]); //throws exception if not a number
+                        if (id < 1 || id > map.size()){
+                            System.out.println("[ERROR} invalid game number");
+                        }
                         String color = inputs[2].toUpperCase();
+                        GameData selectedGame = map.get(id-1);
+                        // if selected game is wrong game
                         if (color.equals("BLACK")){
-                            facade.joinGame(id, ChessGame.TeamColor.BLACK);
+                            facade.joinGame(selectedGame.gameID(), ChessGame.TeamColor.BLACK);
+                            System.out.println("Joined game as Black");
                         } else if (color.equals("WHITE")) {
-                            facade.joinGame(id, ChessGame.TeamColor.WHITE);
+                            facade.joinGame(selectedGame.gameID(), ChessGame.TeamColor.WHITE);
+                            System.out.println("Joined game as White");
                         }
                         else {
                             System.out.println("[ERROR] Invalid color");
@@ -71,7 +87,21 @@ public class PostLogin {
                     }
                     break;
                 case "observe":
-                    break;
+                    if (inputs.length != 2){
+                        System.out.println("[ERROR] You must use this format: observe <ID>");
+                    } else {
+                        int gameNum = Integer.parseInt(inputs[1]);
+                        if (gameNum < 1 || gameNum > games.size()) {
+                            System.out.println("[ERROR] Invalid game number");
+                            break;
+                        }
+                        GameData selectedGame = games.get(gameNum-1);
+                        ChessGame game = selectedGame.game();
+                        Board board = new Board();
+                        board.updateBoard(game.getBoard().getBoard());
+                    }
+                    //just print the board
+                    //more code here in phase 6
             }
         }
     }
