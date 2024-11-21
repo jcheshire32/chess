@@ -1,7 +1,7 @@
 package server;
 
-import RecordClasses.LoginRequest;
-import RecordClasses.RegisterRequest;
+import recordclasses.LoginRequest;
+import recordclasses.RegisterRequest;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
@@ -41,11 +41,19 @@ public class UserHandler {
     }
 
     static String getString500unauth(Response res, UnauthorizedException e, Gson serializer) {
+        return getString(e.getMessage(), res, 500, serializer); //hope this fixes code quality
+    }
+
+    private static String getString(String e, Response res, int statusCode, Gson serializer) {
         Map<String, String> temp = new HashMap<>();
-        temp.put("message", e.getMessage());
-        res.status(500);
+        temp.put("message", e);
+        res.status(statusCode);
         res.body(serializer.toJson(temp));
         return res.body();
+    }
+
+    static String getString500(Response res, DataAccessException e, Gson serializer) {
+        return getString(e.getMessage(), res, 500, serializer);
     }
 
     static String getString400(Response res, BadRequestException e, Gson serializer) {
@@ -57,25 +65,13 @@ public class UserHandler {
     }
 
     static String getString401(Response res, UnauthorizedException e, Gson serializer) {
-        Map<String, String> temp = new HashMap<>();
-        temp.put("message", e.getMessage());
-        res.status(401);
-        res.body(serializer.toJson(temp));
-        return res.body();
+        return getString(e.getMessage(), res, 401, serializer);
     }
 
     static String getString403(Response res, AlreadyTakenException e, Gson serializer) {
         Map<String, Object> temp = new HashMap<>();
         temp.put("message", e.getMessage());
         res.status(403);
-        res.body(serializer.toJson(temp));
-        return res.body();
-    }
-
-    static String getString500(Response res, DataAccessException e, Gson serializer) {
-        Map<String, String> temp = new HashMap<>();
-        temp.put("message", e.getMessage());
-        res.status(500);
         res.body(serializer.toJson(temp));
         return res.body();
     }

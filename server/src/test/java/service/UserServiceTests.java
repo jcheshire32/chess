@@ -1,9 +1,9 @@
 package service;
 
 
-import RecordClasses.LoginRequest;
-import RecordClasses.RegisterRequest;
-import RecordClasses.RegisterResult;
+import recordclasses.LoginRequest;
+import recordclasses.RegisterRequest;
+import recordclasses.RegisterResult;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;

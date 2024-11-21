@@ -13,9 +13,9 @@ public class Main {
         PostLogin postLogin = new PostLogin();
 
         while (true) {
-            String authToken = prelogin.Run(facade);
+            String authToken = prelogin.run(facade);
             while (true) {
-                if (postLogin.Run(facade, authToken)){
+                if (postLogin.run(facade, authToken)){
                     break;
                 }
                 //game UI

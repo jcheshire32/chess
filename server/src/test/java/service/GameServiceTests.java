@@ -1,6 +1,6 @@
 package service;
 
-import RecordClasses.*;
+import recordclasses.*;
 import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;

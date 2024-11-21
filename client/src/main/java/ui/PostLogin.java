@@ -1,14 +1,7 @@
 package ui;
 
-import RecordClasses.CreateGameRequest;
-import RecordClasses.CreateGameResult;
-import RecordClasses.ListGamesResult;
-import RecordClasses.LogoutResult;
-import chess.ChessBoard;
 import chess.ChessGame;
-import model.AuthData;
 import model.GameData;
-import model.UserData;
 import web.ServerFacade;
 
 import java.util.*;
@@ -18,14 +11,13 @@ public class PostLogin {
     HashMap<Integer, GameData> map = new HashMap<>();
 
 
-    public Boolean Run(ServerFacade facade, String authToken) {
+    public Boolean run(ServerFacade facade, String authToken) {
         while (true) { // break on quit again
             System.out.print("[Logged in]>>> ");
-            String input_line = new Scanner(System.in).nextLine();
-            String[] inputs = input_line.split(" ");
+            String inputLine = new Scanner(System.in).nextLine();
+            String[] inputs = inputLine.split(" ");
             String command = inputs[0];
-            //initialize games under the hood shoutout mckenna
-            games = facade.listGames();
+            games = facade.listGames(); //initialize games under the hood shoutout mckenna
             if (!games.isEmpty()) {
                 games = facade.listGames();
                 map.clear();
@@ -48,8 +40,7 @@ public class PostLogin {
                 case "create":
                     if (inputs.length != 2){
                         System.out.println("[ERROR] You must use this format: create <NAME>");
-                    }
-                    else {
+                    } else {
                         String name = inputs[1];
                         facade.createGame(name);
                         System.out.println("Game created successfully");
@@ -70,8 +61,7 @@ public class PostLogin {
                                 game.whiteUsername() + ", Black: " + game.blackUsername());
                     }
                     break;
-                    //join based on numbered list id, not actual game id
-                case "join":
+                case "join": //join based on numbered list id, not actual game id
                     if (inputs.length != 3) { //add more stuff
                         System.out.println("[ERROR] You must use this format: join <ID> [WHITE|BLACK]");
                     }
@@ -85,7 +75,6 @@ public class PostLogin {
                         ChessGame game = selectedGame.game();
                         Board board = new Board();
                         board.updateBoard(game.getBoard().getBoard());
-                        // if selected color is taken
                         if (color.equals("BLACK")){
                             if (selectedGame.blackUsername() == null) {
                                 facade.joinGame(selectedGame.gameID(), ChessGame.TeamColor.BLACK);
@@ -102,9 +91,7 @@ public class PostLogin {
                             } else {
                                 System.out.println("White player is taken");
                             }
-                        } else {
-                            System.out.println("[ERROR] Invalid color");
-                        }
+                        } else {System.out.println("[ERROR] Invalid color");}
                     }
                     break;
                 case "observe":
@@ -129,14 +116,10 @@ public class PostLogin {
                         }
                         if (color.equals("WHITE")) {
                             board.displayWhiteBoard();
-                        }
-                        else if (color.equals("BLACK")) {
+                        } else if (color.equals("BLACK")) {
                             board.displayBlackBoard();
-                        } else {
-                            System.out.println("[ERROR] Invalid color");
-                        }
-                    }
-                    //more code here in phase 6
+                        } else { System.out.println("[ERROR] Invalid color");}
+                    } //more phase 6 code next line here
             }
         }
     }

@@ -1,10 +1,9 @@
 package web;
 
-import RecordClasses.*;
+import recordclasses.*;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
-import model.UserData;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,14 +55,14 @@ public class ServerFacade {
 
     public List<GameData> listGames() {
         var path = "/game";
-        record listGames(List<GameData> games) {}
-        var response = this.makeRequest("GET", path, null, listGames.class);
+        record ListGames(List<GameData> games) {}
+        var response = this.makeRequest("GET", path, null, ListGames.class);
         return response.games();
     }
 
-    public JoinGameResult joinGame(int ID, ChessGame.TeamColor color) {
+    public JoinGameResult joinGame(int iD, ChessGame.TeamColor color) {
         var path = "/game";
-        JoinGameRequest game = new JoinGameRequest(color, ID);
+        JoinGameRequest game = new JoinGameRequest(color, iD);
         return this.makeRequest("PUT", path, game, JoinGameResult.class);
     }
 

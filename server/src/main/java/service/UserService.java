@@ -1,6 +1,6 @@
 package service;
 
-import RecordClasses.*;
+import recordclasses.*;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;

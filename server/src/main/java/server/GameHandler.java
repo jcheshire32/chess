@@ -1,8 +1,8 @@
 package server;
 
 
-import RecordClasses.CreateGameRequest;
-import RecordClasses.JoinGameRequest;
+import recordclasses.CreateGameRequest;
+import recordclasses.JoinGameRequest;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;

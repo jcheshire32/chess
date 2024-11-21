@@ -1,9 +1,9 @@
 package service;
 
-import RecordClasses.CreateGameResult;
-import RecordClasses.JoinGameRequest;
-import RecordClasses.JoinGameResult;
-import RecordClasses.ListGamesResult;
+import recordclasses.CreateGameResult;
+import recordclasses.JoinGameRequest;
+import recordclasses.JoinGameResult;
+import recordclasses.ListGamesResult;
 import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;

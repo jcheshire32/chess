@@ -1,4 +1,4 @@
-package RecordClasses;
+package recordclasses;
 
 import model.GameData;
 

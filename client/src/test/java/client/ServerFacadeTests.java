@@ -1,6 +1,6 @@
 package client;
 
-import RecordClasses.*;
+import recordclasses.*;
 import chess.ChessGame;
 import model.GameData;
 import org.junit.jupiter.api.*;

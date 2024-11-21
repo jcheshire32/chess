@@ -85,13 +85,7 @@ public class Board {
         out.print(" " + (row + 1) + " ");
         out.print(SET_BG_COLOR_LIGHT_GREY);
         for (int col = 0; col < BOARD_SIZE; col++) {
-            if ((row + col) % 2 == 0) {
-                setBlack(out);
-            } else {
-                setWhite(out);
-            }
-            printSquare(out, board[row][col]);
-            setGray(out);
+            extracted(out, row, col);
         }
         out.print(SET_TEXT_COLOR_BLACK);
         out.print(" " + (row + 1));
@@ -99,18 +93,22 @@ public class Board {
         //might need to fix display here again.
     }
 
+    private void extracted(PrintStream out, int row, int col) {
+        if ((row + col) % 2 == 0) {
+            setBlack(out);
+        } else {
+            setWhite(out);
+        }
+        printSquare(out, board[row][col]);
+        setGray(out);
+    }
+
     private void drawBlackRow(PrintStream out, int row) {
         out.print(SET_TEXT_COLOR_BLACK);
         out.print(" " + (row + 1) + " ");
         out.print(SET_BG_COLOR_LIGHT_GREY);
         for (int col = BOARD_SIZE - 1; col >= 0; col--) {
-            if ((row + col) % 2 == 0) {
-                setBlack(out);
-            } else {
-                setWhite(out);
-            }
-            printSquare(out, board[row][col]);
-            setGray(out);
+            extracted(out, row, col); //hope this fixes code quality
         }
         out.print(SET_TEXT_COLOR_BLACK);
         out.print(" " + (row + 1));
@@ -161,58 +159,4 @@ public class Board {
     private static void setGray(PrintStream out) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
     }
-
-    public void whiteBoard() {
-        PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        out.print(ERASE_SCREEN);
-
-        drawWhiteHeaders(out);
-
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            drawWhiteRow(out, i);
-        }
-        drawWhiteHeaders(out);
-
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_WHITE);
-    }
-
-    public void blackBoard() {
-        PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        out.print(ERASE_SCREEN);
-        drawBlackHeaders(out);
-        for (int i = BOARD_SIZE - 1; i >= 0; i--) {
-            drawBlackRow(out,i);
-        }
-        drawBlackHeaders(out);
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_WHITE);
-    }
 }
-
-    // Padded characters.
-//    private static final ChessPiece EMPTY = null;
-//    private static final ChessPiece b_pawn = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-//    private static final ChessPiece w_pawn = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-//    private static final ChessPiece b_rook = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
-//    private static final ChessPiece w_rook = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
-//    private static final ChessPiece b_knight = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
-//    private static final ChessPiece w_knight = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
-//    private static final ChessPiece b_bishop = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
-//    private static final ChessPiece w_bishop = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-//    private static final ChessPiece b_queen = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
-//    private static final ChessPiece w_queen = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
-//    private static final ChessPiece b_king = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
-//    private static final ChessPiece w_king = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
-//
-//
-//    private static final ChessPiece[][] boardStart = {
-//            {b_rook, b_knight, b_bishop, b_queen, b_king, b_bishop, b_knight, b_rook},
-//            {b_pawn, b_pawn, b_pawn, b_pawn, b_pawn, b_pawn, b_pawn, b_pawn},
-//            {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-//            {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-//            {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-//            {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-//            {w_pawn, w_pawn, w_pawn, w_pawn, w_pawn, w_pawn, w_pawn, w_pawn},
-//            {w_rook, w_knight, w_bishop, w_queen, w_king, w_bishop, w_knight, w_rook}
-//    };
