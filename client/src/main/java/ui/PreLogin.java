@@ -26,6 +26,10 @@ public class PreLogin {
                         try {
                             RegisterRequest user = new RegisterRequest(inputs[1], inputs[2], inputs[3]);
                             RegisterResult registered_user = facade.register(user);
+                            if (registered_user.message() != null){
+                                System.out.println(registered_user.message());
+                                continue;
+                            }
                             return registered_user.authToken(); //returning authtoken, shortened by IJ
                         } catch (Exception e) {
                             System.out.println(e); //specify later, Dont show user the stacktrace
@@ -37,8 +41,12 @@ public class PreLogin {
                         System.out.println("[ERROR] You must use this format: login <username> <password>");
                     } else {
                         LoginRequest request = new LoginRequest(inputs[1],inputs[2]);
-                        LoginResult login_result = facade.login(request);
-                        String authToken = login_result.authToken();
+                        LoginResult logResult = facade.login(request);
+                        if (logResult.message() != null){
+                            System.out.println(logResult.message());
+                            continue;
+                        }
+                        String authToken = logResult.authToken();
                         return authToken; //handle failure?
                     }
                     break;

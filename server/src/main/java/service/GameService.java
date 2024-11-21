@@ -61,7 +61,7 @@ public class GameService {
         } catch (DataAccessException e) {
             throw new ServiceException("Error: " + e.getMessage());
         }
-        return new CreateGameResult(gameID);
+        return new CreateGameResult(gameID, null);
     }
     boolean isDuplicateGameID(int gameID, GameDAO gameStorage) throws ServiceException {
         List<GameData> games;
@@ -112,6 +112,6 @@ public class GameService {
         } else { //Neither white nor black
             throw new BadRequestException("Error: bad request");
         }
-        return new JoinGameResult();
+        return new JoinGameResult(null);
     }
 }

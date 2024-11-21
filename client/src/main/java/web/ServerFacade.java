@@ -80,7 +80,6 @@ public class ServerFacade {
 
             writeBody(request, http);
             http.connect();
-            throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         } catch (Exception e) { //throw an exception, handle in the pre/post login
             throw new RuntimeException(e); //NOT ACTUALLY THIS EXCEPTION
@@ -97,16 +96,16 @@ public class ServerFacade {
         }
     }
 
-    private static void throwIfNotSuccessful(HttpURLConnection http) throws IOException {
-        var status = http.getResponseCode();
-        if (status != 200) {
-            //throw a good fail message
-        }
-    }
-
     private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
         T response = null;
-        if (http.getContentLength()<0) {
+        if (http.getContentLength()<0) { //this line might be an issue
+            var status = http.getResponseCode();
+            if (status != 200) {
+                //throw a good fail message
+                InputStream resBody = http.getErrorStream();
+                InputStreamReader reader = new InputStreamReader(resBody);
+                return new Gson().fromJson(reader, responseClass);
+            }
             try (InputStream resBody = http.getInputStream()) {
                 InputStreamReader reader = new InputStreamReader(resBody);
                 if (responseClass != null) {

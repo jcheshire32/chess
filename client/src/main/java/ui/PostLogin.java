@@ -102,8 +102,7 @@ public class PostLogin {
                             } else {
                                 System.out.println("White player is taken");
                             }
-                        }
-                        else {
+                        } else {
                             System.out.println("[ERROR] Invalid color");
                         }
                     }
@@ -133,6 +132,8 @@ public class PostLogin {
                         }
                         else if (color.equals("BLACK")) {
                             board.displayBlackBoard();
+                        } else {
+                            System.out.println("[ERROR] Invalid color");
                         }
                     }
                     //more code here in phase 6

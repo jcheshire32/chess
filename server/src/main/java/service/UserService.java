@@ -46,7 +46,7 @@ public class UserService {
         } catch (DataAccessException e) {
             throw new UnauthorizedException("Error: Authorization failed");
         }
-        return new RegisterResult(user.username(), authToken);
+        return new RegisterResult(user.username(), authToken, null);
     }
     public LoginResult login(LoginRequest user) throws UnauthorizedException, BadRequestException {
         UserData userData;
@@ -66,7 +66,7 @@ public class UserService {
         } catch (DataAccessException e) {
             throw new UnauthorizedException("Error: unauthorized");
         }
-        return new LoginResult(user.username(), authToken);
+        return new LoginResult(user.username(), authToken, null);
     }
     public LogoutResult logout(String authToken) throws UnauthorizedException, BadRequestException {
         String authData;
@@ -83,6 +83,6 @@ public class UserService {
         } catch (DataAccessException e) {
             throw new BadRequestException("Error: Logout failed"); //putting for 500
         }
-        return new LogoutResult();
+        return new LogoutResult(null);
     }
 }
