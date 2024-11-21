@@ -26,7 +26,7 @@ public class Board {
         this.board = newBoard;
     }
 
-    public void displayBoard() {
+    public void displayWhiteBoard() {
         PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(ERASE_SCREEN);
 
@@ -36,6 +36,21 @@ public class Board {
             drawWhiteRow(out, i);
         }
         drawWhiteHeaders(out);
+
+        out.print(SET_BG_COLOR_BLACK);
+        out.print(SET_TEXT_COLOR_WHITE);
+    }
+
+    public void displayBlackBoard() {
+        PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        out.print(ERASE_SCREEN);
+
+        drawBlackHeaders(out);
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            drawBlackRow(out, i);
+        }
+        drawBlackHeaders(out);
 
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
@@ -56,6 +71,7 @@ public class Board {
 
     private static void drawBlackHeaders(PrintStream out) {
         setGray(out);
+        out.print(SET_TEXT_COLOR_BLACK);
         String[] headers = {"h", "g", "f", "e", "d", "c", "b", "a"};
         out.print("  ");
         for (String header : headers) {
@@ -70,9 +86,9 @@ public class Board {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         for (int col = 0; col < BOARD_SIZE; col++) {
             if ((row + col) % 2 == 0) {
-                setWhite(out);
-            } else {
                 setBlack(out);
+            } else {
+                setWhite(out);
             }
             printSquare(out, board[row][col]);
             setGray(out);
@@ -89,15 +105,16 @@ public class Board {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         for (int col = BOARD_SIZE - 1; col >= 0; col--) {
             if ((row + col) % 2 == 0) {
-                setWhite(out);
-            } else {
                 setBlack(out);
+            } else {
+                setWhite(out);
             }
             printSquare(out, board[row][col]);
             setGray(out);
         }
         out.print(SET_TEXT_COLOR_BLACK);
         out.print(" " + (row + 1));
+        out.println();
     }
 
     private void printSquare(PrintStream out, ChessPiece piece) { //piece or string

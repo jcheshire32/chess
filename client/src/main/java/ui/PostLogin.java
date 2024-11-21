@@ -24,6 +24,15 @@ public class PostLogin {
             String input_line = new Scanner(System.in).nextLine();
             String[] inputs = input_line.split(" ");
             String command = inputs[0];
+            //initialize games under the hood shoutout mckenna
+            games = facade.listGames();
+            if (!games.isEmpty()) {
+                games = facade.listGames();
+                map.clear();
+                for (int i = 0; i < games.size(); i++) {
+                    map.put(i, games.get(i));
+                }
+            }
             switch(command){
                 case "help":
                     System.out.println("create <NAME> - a game ");
@@ -63,7 +72,7 @@ public class PostLogin {
                     break;
                     //join based on numbered list id, not actual game id
                 case "join":
-                    if (inputs.length != 3){
+                    if (inputs.length != 3) { //add more stuff
                         System.out.println("[ERROR] You must use this format: join <ID> [WHITE|BLACK]");
                     }
                     else {
@@ -73,13 +82,26 @@ public class PostLogin {
                         }
                         String color = inputs[2].toUpperCase();
                         GameData selectedGame = map.get(id-1);
-                        // if selected game is wrong game
+                        ChessGame game = selectedGame.game();
+                        Board board = new Board();
+                        board.updateBoard(game.getBoard().getBoard());
+                        // if selected color is taken
                         if (color.equals("BLACK")){
-                            facade.joinGame(selectedGame.gameID(), ChessGame.TeamColor.BLACK);
-                            System.out.println("Joined game as Black");
+                            if (selectedGame.blackUsername() == null) {
+                                facade.joinGame(selectedGame.gameID(), ChessGame.TeamColor.BLACK);
+                                System.out.println("Joined game as Black");
+                                board.displayBlackBoard();
+                            } else {
+                                System.out.println("Black player is taken");
+                            }
                         } else if (color.equals("WHITE")) {
-                            facade.joinGame(selectedGame.gameID(), ChessGame.TeamColor.WHITE);
-                            System.out.println("Joined game as White");
+                            if (selectedGame.whiteUsername() == null) {
+                                facade.joinGame(selectedGame.gameID(), ChessGame.TeamColor.WHITE);
+                                System.out.println("Joined game as White");
+                                board.displayWhiteBoard();
+                            } else {
+                                System.out.println("White player is taken");
+                            }
                         }
                         else {
                             System.out.println("[ERROR] Invalid color");
@@ -99,7 +121,19 @@ public class PostLogin {
                         ChessGame game = selectedGame.game();
                         Board board = new Board();
                         board.updateBoard(game.getBoard().getBoard());
-                        board.displayBoard(); //just white board for now....
+                        System.out.println("Which color's perspective do you want to observe?");
+                        String inputGame = new Scanner(System.in).nextLine();
+                        String[] inGame = inputGame.split(" ");
+                        String color = inGame[0].toUpperCase();
+                        if (inGame.length != 1 ){
+                            System.out.println("[ERROR] Just type the color, white or black");
+                        }
+                        if (color.equals("WHITE")) {
+                            board.displayWhiteBoard();
+                        }
+                        else if (color.equals("BLACK")) {
+                            board.displayBlackBoard();
+                        }
                     }
                     //more code here in phase 6
             }

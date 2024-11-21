@@ -26,6 +26,7 @@ public class ServerFacade {
 
     public RegisterResult register(RegisterRequest req) {
         var path = "/user";
+        //try catch block for registering with a taken username?
         RegisterResult result = this.makeRequest("POST", path, req, RegisterResult.class);
         authToken = result.authToken();
         return result;
@@ -33,6 +34,7 @@ public class ServerFacade {
 
     public LoginResult login(LoginRequest req) {
         var path = "/session"; //same as server right?
+        //try catch block for bad credentials?
         LoginResult result = this.makeRequest("POST", path, req, LoginResult.class);
         authToken = result.authToken();
         return result;

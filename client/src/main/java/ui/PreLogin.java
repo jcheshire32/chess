@@ -20,7 +20,7 @@ public class PreLogin {
             String command = inputs[0];
             switch(command){
                 case "register":
-                    if (inputs.length != 4){
+                    if (inputs.length != 4){ //add a check for if the username is taken
                         System.out.println("[ERROR] You must use this format: register <USERNAME> <PASSWORD> <EMAIL>");
                     } else {
                         try {
@@ -33,7 +33,7 @@ public class PreLogin {
                     }
                     break;
                 case "login":
-                    if (inputs.length != 3){
+                    if (inputs.length != 3){ //or a user not found
                         System.out.println("[ERROR] You must use this format: login <username> <password>");
                     } else {
                         LoginRequest request = new LoginRequest(inputs[1],inputs[2]);

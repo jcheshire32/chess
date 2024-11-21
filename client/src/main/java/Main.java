@@ -11,8 +11,6 @@ public class Main {
         ServerFacade facade = new ServerFacade("http://localhost:8080");
         PreLogin prelogin = new PreLogin();
         PostLogin postLogin = new PostLogin();
-        Board board = new Board();
-        board.displayBoard();
 
         while (true) {
             String authToken = prelogin.Run(facade);
