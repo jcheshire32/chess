@@ -67,6 +67,11 @@ public class ServerFacade {
         return this.makeRequest("PUT", path, game, JoinGameResult.class);
     }
 
+    public void clear(){
+        var path = "/db";
+        makeRequest("DELETE", path, null, null);
+    }
+
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) {
         try{
             URL url = (new URI(serverUrl + path)).toURL();
