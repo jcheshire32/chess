@@ -55,7 +55,13 @@ public class PostLogin {
         if (inputs.length != 2){
             System.out.println("[ERROR] You must use this format: observe <ID>");
         } else {
-            int gameNum = Integer.parseInt(inputs[1]);
+            int gameNum;
+            try {
+                gameNum = Integer.parseInt(inputs[1]);
+            } catch (NumberFormatException e){
+                System.out.println("[ERROR] Must be a number");
+                return;
+            }
             if (gameNum < 1 || gameNum > games.size()) {
                 System.out.println("[ERROR] Invalid game number");
                 return;
@@ -87,9 +93,16 @@ public class PostLogin {
             System.out.println("[ERROR] You must use this format: join <ID> [WHITE|BLACK]");
         }
         else {
-            int id = Integer.parseInt(inputs[1]); //throws exception if not a number
+            int id;
+            try {
+                id = Integer.parseInt(inputs[1]); //throws exception if not a number
+            } catch (NumberFormatException e){
+                System.out.println("[ERROR] Must be a number");
+                return;
+            }
             if (id < 1 || id > map.size()){
-                System.out.println("[ERROR} invalid game number");
+                System.out.println("[ERROR] invalid game number");
+                return;
             }
             String color = inputs[2].toUpperCase();
             GameData selectedGame = map.get(id-1);
