@@ -105,10 +105,7 @@ public class UserHandler {
     }
 
     private static String getString500BadReq(Response res, BadRequestException e, Gson serializer) {
-        Map<String, Object> temp = new HashMap<>();
-        temp.put("message", e.getMessage());
-        res.status(500);
-        res.body(serializer.toJson(temp));
+        ClearHandler.extracted(res, e, serializer);
         return res.body();
     }
 }

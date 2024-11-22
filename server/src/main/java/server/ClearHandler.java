@@ -32,11 +32,15 @@ public class ClearHandler {
             new ClearService(authDAO,userDAO,gameDAO).clear();
             return "{}";
         } catch (Exception e) {
-            Map<String, Object> temp = new HashMap<>();
-            temp.put("message", e.getMessage());
-            res.status(500);
-            res.body(serializer.toJson(temp));
+            extracted(res, e, serializer);
             return res.body();
         }
+    }
+
+    public static void extracted(Response res, Exception e, Gson serializer) {
+        Map<String, Object> temp = new HashMap<>();
+        temp.put("message", e.getMessage());
+        res.status(500);
+        res.body(serializer.toJson(temp));
     }
 }
