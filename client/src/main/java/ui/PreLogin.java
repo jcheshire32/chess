@@ -24,10 +24,7 @@ public class PreLogin {
                         try {
                             RegisterRequest user = new RegisterRequest(inputs[1], inputs[2], inputs[3]);
                             RegisterResult registeredUser = facade.register(user);
-                            if (registeredUser.message() != null){
-                                System.out.println(registeredUser.message());
-                                continue;
-                            }
+                            if (codeQualityExtraction(registeredUser.message())) continue;
                             return registeredUser.authToken(); //returning authtoken, shortened by IJ
                         } catch (Exception e) {
                             System.out.println(e); //specify later, Dont show user the stacktrace
@@ -40,10 +37,7 @@ public class PreLogin {
                     } else {
                         LoginRequest request = new LoginRequest(inputs[1],inputs[2]);
                         LoginResult logResult = facade.login(request);
-                        if (logResult.message() != null){
-                            System.out.println(logResult.message());
-                            continue;
-                        }
+                        if (codeQualityExtraction(logResult.message())) continue;
                         String authToken = logResult.authToken();
                         return authToken; //handle failure?
                     }
@@ -61,5 +55,13 @@ public class PreLogin {
                     System.out.println("Invalid command");
             }
         }
+    }
+
+    private static boolean codeQualityExtraction(String registeredUser) {
+        if (registeredUser != null) {
+            System.out.println(registeredUser);
+            return true;
+        }
+        return false;
     }
 }
