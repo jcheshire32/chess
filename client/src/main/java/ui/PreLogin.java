@@ -18,17 +18,13 @@ public class PreLogin {
             String command = inputs[0];
             switch(command){
                 case "register":
-                    if (inputs.length != 4){ //add a check for if the username is taken
-                        System.out.println("[ERROR] You must use this format: register <USERNAME> <PASSWORD> <EMAIL>");
-                    } else {
-                        try {
-                            RegisterRequest user = new RegisterRequest(inputs[1], inputs[2], inputs[3]);
-                            RegisterResult registeredUser = facade.register(user);
-                            if (codeQualityExtraction(registeredUser.message())) continue;
-                            return registeredUser.authToken(); //returning authtoken, shortened by IJ
-                        } catch (Exception e) {
-                            System.out.println(e); //specify later, Dont show user the stacktrace
+                    try {
+                        String authToken = doRegister(inputs, facade);
+                        if(authToken != null) {
+                            return authToken;
                         }
+                    } catch (Exception e) {
+                        System.out.println(e); //specify later, Don't show user the stacktrace
                     }
                     break;
                 case "login":
@@ -37,7 +33,10 @@ public class PreLogin {
                     } else {
                         LoginRequest request = new LoginRequest(inputs[1],inputs[2]);
                         LoginResult logResult = facade.login(request);
-                        if (codeQualityExtraction(logResult.message())) continue;
+                        if (logResult.message() != null){
+                            System.out.println(logResult.message());
+                            continue;
+                        }
                         String authToken = logResult.authToken();
                         return authToken; //handle failure?
                     }
@@ -56,12 +55,18 @@ public class PreLogin {
             }
         }
     }
-
-    private static boolean codeQualityExtraction(String registeredUser) {
-        if (registeredUser != null) {
-            System.out.println(registeredUser);
-            return true;
+    private String doRegister(String[] inputs, ServerFacade facade) {
+        if (inputs.length != 4){
+            System.out.println("[ERROR] You must use this format: register <USERNAME> <PASSWORD> <EMAIL>");
+            return null;
+        } else {
+            RegisterRequest user = new RegisterRequest(inputs[1], inputs[2], inputs[3]);
+            RegisterResult registeredUser = facade.register(user);
+            if (registeredUser.message() != null){
+                System.out.println(registeredUser.message());
+                return null;
+            }
+            return registeredUser.authToken();
         }
-        return false;
     }
 }
