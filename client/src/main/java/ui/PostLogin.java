@@ -42,11 +42,12 @@ public class PostLogin {
                     //join based on numbered list id, not actual game id
                 case "join":
                     gameJoiner(facade, inputs);
+                    //they are now in gameplay mode
                     break;
                 case "observe":
                     gameObserver(inputs);
+                    //they are now in gameplay mode
                     break;
-                //more here in phase 6?
             }
         }
     }
