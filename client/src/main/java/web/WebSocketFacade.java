@@ -10,11 +10,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+//make handler for the different messages? check the specs
+
 public class WebSocketFacade extends Endpoint {
 
     private Session session;
 
     public WebSocketFacade(String url) {
+
         try {
             url = url.replace("http", "ws");
             URI uri = new URI(url + "/connect");

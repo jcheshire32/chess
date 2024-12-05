@@ -9,9 +9,9 @@ import java.util.*;
 public class PostLogin {
     List<GameData> games;
     HashMap<Integer, GameData> map = new HashMap<>();
+//MAKE THESE ALL RETURN THE GAME
 
-
-    public Boolean run(ServerFacade facade, String authToken) {
+    public ChessGame run(ServerFacade facade, String authToken) {
         while (true) { // break on quit again
             System.out.print("[Logged in]>>> ");
             String inputLine = new Scanner(System.in).nextLine();
@@ -32,7 +32,7 @@ public class PostLogin {
                     break;
                 case "logout":
                     facade.logout(authToken);
-                    return true;
+                    return null; //changed from return true when function was a boolean not a chessgame
                 case "create":
                     gameCreator(facade, inputs);
                     break;
