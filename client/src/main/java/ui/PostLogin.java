@@ -84,6 +84,7 @@ public class PostLogin {
             }
             else if (color.equals("BLACK")) {
                 board.displayBlackBoard();
+                //return board?
             } else {
                 System.out.println("[ERROR] Invalid color");
             }
