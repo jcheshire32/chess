@@ -80,6 +80,7 @@ public class PostLogin {
             }
             if (color.equals("WHITE")) {
                 board.displayWhiteBoard();
+                //return board?
             }
             else if (color.equals("BLACK")) {
                 board.displayBlackBoard();
