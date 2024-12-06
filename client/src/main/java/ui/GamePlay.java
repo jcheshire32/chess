@@ -5,6 +5,8 @@ import web.ServerFacade;
 
 import java.util.Scanner;
 
+
+//game
 public class GamePlay {
 //added game as parameter
     public Boolean run(ServerFacade facade, String authToken, ChessGame game) {
