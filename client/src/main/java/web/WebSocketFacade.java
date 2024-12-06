@@ -11,7 +11,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 //make handler for the different messages? check the specs
-//more
+//more and more
 
 public class WebSocketFacade extends Endpoint {
 
